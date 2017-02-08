@@ -1,9 +1,17 @@
 <resources>
     <string name="app_name">QQdemo</string>
-    <string name="buttonmessage">登录</string>
+    <string name="qqbutton">QQ</string>
     <string name="buttonsharetoQQ">分享到QQ</string>
     <string name="buttonsharetoQQZone">分享到空间</string>
+    <string name="wxbutton">微信</string>
+    <string name="buttonsharetoWX">分享到微信</string>
+    <string name="buttonsharetoWXSNS">分享到朋友圈</string>
+    <string name="sinabutton">SINA</string>
+    <string name="buttonsharetoSina">分享到微博</string>
     <string name="title_activity_qqshare">QQShareActivity</string>
     <string name="title_activity_base">BaseActivity</string>
     <string name="sharecancel">shareToQQ onCancel</string>
+    <string name="weibosdk_demo_toast_auth_success">授权成功</string>
+    <string name="weibosdk_demo_toast_auth_failed">授权失败</string>
+    <string name="weibosdk_demo_toast_auth_canceled">取消授权</string>
 </resources>

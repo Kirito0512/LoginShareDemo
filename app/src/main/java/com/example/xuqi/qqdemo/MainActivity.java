@@ -1,21 +1,33 @@
 package com.example.xuqi.qqdemo;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.example.xuqi.qqdemo.Sinaapi.AccessTokenKeeper;
+import com.example.xuqi.qqdemo.Sinaapi.LogoutAPI;
+import com.example.xuqi.qqdemo.Sinaapi.UsersAPI;
+import com.example.xuqi.qqdemo.Sinaapi.Util;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WeiboAuthListener;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.sina.weibo.sdk.exception.WeiboException;
+import com.sina.weibo.sdk.net.RequestListener;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.common.Constants;
-import com.tencent.connect.share.QQShare;
-import com.tencent.connect.share.QzoneShare;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -23,22 +35,17 @@ import com.tencent.tauth.UiError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
-import static com.tencent.connect.share.QzoneShare.SHARE_TO_QZONE_TYPE_IMAGE_TEXT;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    public final static String SHARE_TITLE = "title";//分享的标题, 最长30个字符。
-    public final static String SHARE_CONTENT = "summary";//分享的消息摘要，最长40个字。
-    public final static String SHARE_TARGET_URL = "targetUrl";//分享出去后，点击内容跳转到的目标地址 QQ,QZone,Weixin,WeixinSNS
-    public final static String SHARE_IMAGE_URL = "imageUrl";//分享图片的URL或者本地路径
-    public final static String SHARE_IMAGE_LOCAL_URL = "imageLocalUrl";//一般放截屏分享的路径,本地图片路径,imageUrl同时存在时，优先使用imageLocalUrl
-    public final static String SHARE_IMAGE_DATA = "imageData"; // 微信分享使用的图片数据
-    private Button button,share_QQ_Button,share_Zone_Button;
-    private Tencent mTencent;
-    private ImageView icon;
+    private Button QQbutton, Sinabutton;
+    private Oauth2AccessToken mAccessToken;
+    private UsersAPI mUsersAPI;
+    public static Tencent mTencent;
+    public static IWXAPI wxapi;
+    private SsoHandler mSsoHandler;
     public static final String AppId = "1105896371";
-    private static boolean isServerSideLogin = false;
+    private static final String WX_APPId = "wx88888888";
+    private String type = "";
     private static final String SCOPE = "get_simple_userinfo,get_user_info,get_user_profile,get_app_friends,add_share,get_idollist,add_topic,list_album,upload_pic,add_album,add_t,add_pic_t";//
     public IUiListener loginListener = new IUiListener() {
         @Override
@@ -52,158 +59,280 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String openID = object.getString("openid");
                 mTencent.setAccessToken(accessToken, expires);
                 mTencent.setOpenId(openID);
-                button.setText("注销");
+                QQbutton.setText("注销");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+
         public void onError(UiError uiError) {
             Toast.makeText(MainActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
         }
+
         public void onCancel() {
             Toast.makeText(MainActivity.this, "CANCEL", Toast.LENGTH_SHORT).show();
         }
 
     };
-    public IUiListener shareListener = new IUiListener() {
 
-        @Override
-        public void onError(UiError e) {
-            Toast.makeText(MainActivity.this,"error",Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onCancel() {
-            Toast.makeText(MainActivity.this,getString(R.string.sharecancel),Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onComplete(Object arg0) {
-            Toast.makeText(MainActivity.this,"complete",Toast.LENGTH_SHORT).show();
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mTencent = Tencent.createInstance(AppId, this.getApplicationContext());
-        icon = (ImageView) findViewById(R.id.head_photo);
-        share_Zone_Button = (Button) findViewById(R.id.share_QQZone_button);
-        share_QQ_Button = (Button) findViewById(R.id.share_QQ_button);
-        button = (Button) findViewById(R.id.login_button);
-
-        button.setOnClickListener(this);
-        share_QQ_Button.setOnClickListener(this);
-        share_Zone_Button.setOnClickListener(this);
+        Log.d("xuqi", "onCreate: " + getPackageName());
+        QQbutton = (Button) findViewById(R.id.QQ_login_button);
+        Sinabutton = (Button) findViewById(R.id.Sina_login_button);
+        QQbutton.setOnClickListener(this);
+        Sinabutton.setOnClickListener(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == Constants.REQUEST_LOGIN) {
-            if (resultCode == -1) {
-                Tencent.onActivityResultData(requestCode, resultCode, data, loginListener);
-                UserInfo info = new UserInfo(this, mTencent.getQQToken());
-                info.getUserInfo(new IUiListener() {
-                    @Override
-                    public void onComplete(Object o) {
-                        try {
-                            JSONObject info = (JSONObject) o;
-                            String nickName = info.getString("nickname");//获取用户昵称
-                            String iconUrl = info.getString("figureurl_qq_2");//获取用户头像的url
-                            Toast.makeText(MainActivity.this,"昵称："+nickName, Toast.LENGTH_SHORT).show();
-                            Glide.with(MainActivity.this).load(iconUrl).transform(new GlideRoundTransform(getApplicationContext(),10)).
-                                    placeholder(R.drawable.ic_cloud_download_black_24dp).
-                                    error(R.drawable.ic_delete_forever_black_24dp).into(icon);//Glide解析获取用户头像
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+        if (type.equals("QQ")) {
+            if (requestCode == Constants.REQUEST_LOGIN) {
+                if (resultCode == -1) {
+                    Tencent.onActivityResultData(requestCode, resultCode, data, loginListener);
+                    UserInfo info = new UserInfo(this, mTencent.getQQToken());
+                    info.getUserInfo(new IUiListener() {
+                        @Override
+                        public void onComplete(Object o) {
+                            try {
+                                JSONObject info = (JSONObject) o;
+                                String nickName = info.getString("nickname");//获取用户昵称
+                                String iconUrl = info.getString("figureurl_qq_2");//获取用户头像的url
+                                Toast.makeText(MainActivity.this, "昵称：" + nickName, Toast.LENGTH_SHORT).show();
+                                UserInfoActivity.showActivity(MainActivity.this, nickName, iconUrl, type);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                    @Override
 
-                    public void onError(UiError uiError) {
+                        @Override
 
-                    }
-                    @Override
-                    public void onCancel() {
-                    }
-                });
+                        public void onError(UiError uiError) {
+
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+                }
+            }
+        } else if (type.equals("Sina")) {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            // SSO 授权回调
+            // 重要：发起 SSO 登陆的 Activity 必须重写 onActivityResults
+            if (mSsoHandler != null) {
+                mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
             }
         }
     }
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.login_button:
-                if(button.getText().equals("登录"))
-                    login();
+        switch (view.getId()) {
+            case R.id.QQ_login_button:
+                type = "QQ";
+                if(QQbutton.getText().equals("QQ"))
+                loginQQ();
                 else{
                     mTencent.logout(MainActivity.this);
-                    button.setText("登录");
+                    QQbutton.setText("QQ");
                 }
                 break;
-            case R.id.share_QQ_button:
-                doShareToQQ();
+            case R.id.Sina_login_button:
+                type = "Sina";
+                if (Sinabutton.getText().equals("SINA"))
+                    loginSina();
+                else {
+                    new LogoutAPI(MainActivity.this, com.example.xuqi.qqdemo.Constants.SINA_APP_KEY,
+                            AccessTokenKeeper.readAccessToken(MainActivity.this)).logout(new LogOutRequestListener());
+                    Sinabutton.setText("SINA");
+                }
                 break;
-            case R.id.share_QQZone_button:
-                shareToQzone();
+            default:
                 break;
-                default:
-                    break;
         }
     }
 
-
-    private void doShareToQQ() {
-        Bundle bundle = new Bundle();
-
-        bundle.putString(QQShare.SHARE_TO_QQ_TITLE, "火星");
-        bundle.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "http://changba.com?");
-        bundle.putString(QQShare.SHARE_TO_QQ_IMAGE_URL,"http://imgcache.qq.com/qzone/space_item/pre/0/66768.gif");
-        bundle.putString(QQShare.SHARE_TO_QQ_SUMMARY, "大家快来一起玩吧！");
-
-        // qq 分享必须设置分享的类型,SHARE_TO_QQ_TYPE_DEFAULT为图文混排默认类型.
-        bundle.putInt(com.tencent.connect.share.QQShare.SHARE_TO_QQ_KEY_TYPE, com.tencent.connect.share.QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
-        share(this,bundle);
+    //微博登录
+    private void loginSina() {
+        // 微博授权
+        AuthInfo mAuthInfo = new AuthInfo(this, com.example.xuqi.qqdemo.Constants.SINA_APP_KEY, com.example.xuqi.qqdemo.Constants.SINA_REDIRECT_URL, com.example.xuqi.qqdemo.Constants.SINA_SCOPE);
+        mSsoHandler = new SsoHandler(this, mAuthInfo);
+        mSsoHandler.authorize(new AuthListener());
     }
 
-    private void share(Activity activity, Bundle params) {
-        mTencent.shareToQQ(activity, params, shareListener);
+    public void registeToWx() {
+        wxapi = WXAPIFactory.createWXAPI(this, WX_APPId, true);
+        //将应用的appid注册到微信
+        wxapi.registerApp(WX_APPId);
     }
 
-    private void shareToQzone () {
-        Bundle params = new Bundle();
-        //分享类型
-        params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE,SHARE_TO_QZONE_TYPE_IMAGE_TEXT );
-        params.putString(QzoneShare.SHARE_TO_QQ_TITLE, "标题");//必填
-        params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, "摘要");//选填
-        params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, "http://changba.com?");//必填
-        params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL,
-                new ArrayList<String>(){{
-                    add("http://imgcache.qq.com/qzone/space_item/pre/0/66768.gif");
-                    add("http://image.baidu.com/search/detail?ct=503316480&z=0&ipn=false&word=头像&hs=0&pn=3&spn=0&di=143942644890&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&ie=utf-8&oe=utf-8&cl=2&lm=-1&cs=1365184907%2C920260653&os=2236587395%2C1886995582&simid=4249720609%2C617641245&adpicid=0&lpn=0&ln=30&fr=ala&fm=&sme=&cg=head&bdtype=0&oriquery=头像&objurl=http%3A%2F%2Ftx.haiqq.com%2Fuploads%2Fallimg%2F140612%2F13300A442-38.png&fromurl=ippr_z2C%24qAzdH3FAzdH3Fpx_z%26e3Biwtqq_z%26e3Bv54AzdH3Fqtg2sep57xtwg2AzdH3Fda89am8dAzdH3Fd09m_d_z%26e3Bip4s&gsm=0");}});
-        mTencent.shareToQzone(this, params, shareListener);
+    private void shareToWXSNS() {
+        if (wxapi == null)
+            registeToWx();
+        WXWebpageObject webpage = new WXWebpageObject();
+        webpage.webpageUrl = "http://changba.com";
+
+        //用WXWebpageMessageObject对象初始化一个WXMediaMessage对象，填写标题，描述
+        WXMediaMessage msg = new WXMediaMessage(webpage);
+        msg.title = "标题 唱吧";
+        msg.description = "内容描述";
+        Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.drawable.send_music_thumb);
+        //TODO
+        msg.thumbData = Util.bmpToByteArray(thumb, true);
+        //构造一个Req
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        //transaction字段用于唯一标示一个请求
+        req.transaction = String.valueOf(System.currentTimeMillis());
+        Log.d("xuqi", "shareToWX: " + System.currentTimeMillis());
+        req.message = msg;
+        req.scene = SendMessageToWX.Req.WXSceneTimeline;
+        // 调用api接口发送数据到微信
+        wxapi.sendReq(req);
     }
 
-    private void login() {
-        if (!mTencent.isSessionValid())
-        {
+    private void shareToWX() {
+        if (wxapi == null)
+            registeToWx();
+        WXWebpageObject webpage = new WXWebpageObject();
+        webpage.webpageUrl = "http://changba.com";
+
+        //用WXWebpageMessageObject对象初始化一个WXMediaMessage对象，填写标题，描述
+        WXMediaMessage msg = new WXMediaMessage(webpage);
+        msg.title = "标题 唱吧";
+        msg.description = "内容描述";
+        Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.drawable.send_music_thumb);
+        //TODO
+        msg.thumbData = Util.bmpToByteArray(thumb, true);
+        //构造一个Req
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        //transaction字段用于唯一标示一个请求
+        req.transaction = String.valueOf(System.currentTimeMillis());
+        Log.d("xuqi", "shareToWX: " + System.currentTimeMillis());
+        req.message = msg;
+        req.scene = SendMessageToWX.Req.WXSceneSession;
+        // 调用api接口发送数据到微信
+        wxapi.sendReq(req);
+    }
+
+    private void loginQQ() {
+        mTencent = Tencent.createInstance(AppId, this.getApplicationContext());
+        if (!mTencent.isSessionValid()) {
             mTencent.login(this, SCOPE, loginListener);
-            isServerSideLogin = false;
-        }else {
-            if (isServerSideLogin) { // Server-Side 模式的登陆, 先退出，再进行SSO登陆
-                mTencent.logout(this);
-                mTencent.login(this, SCOPE, loginListener);
-                isServerSideLogin = false;
-                Log.d("SDKQQAgentPref", "FirstLaunch_SDK:" + SystemClock.elapsedRealtime());
-                return;
+        }
+    }
+
+    // Sina回调
+    class AuthListener implements WeiboAuthListener {
+
+        @Override
+        public void onComplete(Bundle values) {
+            // 从 Bundle 中解析 Token
+            mAccessToken = Oauth2AccessToken.parseAccessToken(values);
+            //从这里获取用户输入的 电话号码信息
+            String phoneNum = mAccessToken.getPhoneNum();
+            Log.d("xuqi", "onComplete: phone = "+phoneNum);
+            if (mAccessToken.isSessionValid()) {
+                // 保存 Token 到 SharedPreferences
+                AccessTokenKeeper.writeAccessToken(MainActivity.this, mAccessToken);
+                Toast.makeText(MainActivity.this,
+                        R.string.weibosdk_demo_toast_auth_success, Toast.LENGTH_SHORT).show();
+                //获取用户信息
+                mUsersAPI = new UsersAPI(MainActivity.this, com.example.xuqi.qqdemo.Constants.SINA_APP_KEY, mAccessToken);
+                long uid = Long.parseLong(mAccessToken.getUid());
+                mUsersAPI.show(uid, mListener);
+                Sinabutton.setText("注销");
+            } else {
+                // 以下几种情况，您会收到 Code：
+                // 1. 当您未在平台上注册的应用程序的包名与签名时；
+                // 2. 当您注册的应用程序包名与签名不正确时；
+                // 3. 当您在平台上注册的包名和签名与您当前测试的应用的包名和签名不匹配时。
+                String code = values.getString("code");
+                String message = getString(R.string.weibosdk_demo_toast_auth_failed);
+                if (!TextUtils.isEmpty(code)) {
+                    message = message + "\nObtained the code: " + code;
+                }
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
             }
-            mTencent.logout(this);
-//            updateUserInfo();
-//            updateLoginButton();
+        }
+
+        @Override
+        public void onCancel() {
+            Toast.makeText(MainActivity.this,
+                    R.string.weibosdk_demo_toast_auth_canceled, Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onWeiboException(WeiboException e) {
+            Toast.makeText(MainActivity.this,
+                    "Auth exception : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * 微博 OpenAPI 回调接口。（获取信息）
+     */
+    private RequestListener mListener = new RequestListener() {
+        @Override
+        public void onComplete(String response) {
+            if (!TextUtils.isEmpty(response)) {
+                //LogUtil.i(TAG, response);User.java
+                // 调用 User#parse 将JSON串解析成User对象
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if (json != null) {
+//                        Toast.makeText(MainActivity.this,
+//                                "获取User信息成功，用户昵称：" + json.getString("screen_name"),
+//                                Toast.LENGTH_LONG).show();
+                        String nickName = json.getString("screen_name");//获取用户昵称
+                        String iconUrl = json.getString("profile_image_url");//获取用户头像的url
+                        Toast.makeText(MainActivity.this, "昵称：" + nickName, Toast.LENGTH_SHORT).show();
+                        UserInfoActivity.showActivity(MainActivity.this, nickName, iconUrl, type);
+                    } else {
+                        Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        @Override
+        public void onWeiboException(WeiboException e) {
+            //LogUtil.e(TAG, e.getMessage());
+//            ErrorInfo info = ErrorInfo.parse(e.getMessage());
+//            Toast.makeText(MainActivity.this, info.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "获取信息错误", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    /**
+     * 登出按钮的监听器，接收登出处理结果。（API 请求结果的监听器）
+     */
+    private class LogOutRequestListener implements RequestListener {
+        @Override
+        public void onComplete(String response) {
+            if (!TextUtils.isEmpty(response)) {
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    String value = obj.getString("result");
+
+                    if ("true".equalsIgnoreCase(value)) {
+                        AccessTokenKeeper.clear(MainActivity.this);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onWeiboException(WeiboException e) {
         }
     }
 }
