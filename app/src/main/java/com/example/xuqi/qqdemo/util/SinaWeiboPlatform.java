@@ -3,8 +3,7 @@ package com.example.xuqi.qqdemo.util;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,6 +18,7 @@ import com.example.xuqi.qqdemo.Sinaapi.Status;
 import com.example.xuqi.qqdemo.Sinaapi.StatusList;
 import com.example.xuqi.qqdemo.Sinaapi.StatusesAPI;
 import com.example.xuqi.qqdemo.Sinaapi.UsersAPI;
+import com.example.xuqi.qqdemo.Sinaapi.WBShareToMessageFriendActivity;
 import com.example.xuqi.qqdemo.UserInfoActivity;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -47,17 +47,20 @@ public class SinaWeiboPlatform extends Platform {
 
     @Override
     public void authrize(Activity activity) {
-        try{
+        try {
             this.activity = activity;
-            AuthInfo mAuthInfo = new AuthInfo(activity, com.example.xuqi.qqdemo.Constants.SINA_APP_KEY, com.example.xuqi.qqdemo.Constants.SINA_REDIRECT_URL, com.example.xuqi.qqdemo.Constants.SINA_SCOPE);
+            listener.onStart(SinaWeiboPlatform.this,Platform.Sina);
+            // 创建微博授权类对象
+            AuthInfo mAuthInfo = new AuthInfo(activity, Constants.SINA_APP_KEY, Constants.SINA_REDIRECT_URL, Constants.SINA_SCOPE);
+            // 创建SsoHandler对象
             mSsoHandler = new SsoHandler(activity, mAuthInfo);
             mSsoHandler.authorize(new AuthListener());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void logout(Activity activity){
+    public void logout(Activity activity) {
         this.activity = activity;
         new LogoutAPI(activity, com.example.xuqi.qqdemo.Constants.SINA_APP_KEY,
                 AccessTokenKeeper.readAccessToken(activity)).logout(new LogOutRequestListener());
@@ -83,18 +86,22 @@ public class SinaWeiboPlatform extends Platform {
         this.activity = activity;
         Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(activity);
         StatusesAPI mStatusesAPI = new StatusesAPI(activity, Constants.SINA_APP_KEY, accessToken);
-
-        Drawable drawable = activity.getResources().getDrawable(R.drawable.ic_com_sina_weibo_sdk_logo);
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+//        Drawable drawable = activity.getResources().getDrawable(R.drawable.ic_com_sina_weibo_sdk_logo);
+//        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(),R.drawable.ic_com_sina_weibo_sdk_logo);
         String content = "挑剔如我赶脚【雪:儿】棒棒哒！请吃下我这颗安利https://mars.changba.com/s/VnJU8DRVBwgemAmjV7RWYeSHuf2korNz?&code=DRuXOvems0Fv3q5j76knjtxHbJfwWq5JK8_m_yEyLigkvf6jEx9lfITc7wSSA--7";
         String imageUrl = "http://aliimg.changbalive.com/photo/154/882419ce25136b67_200_200.jpg";
         mStatusesAPI.upload(content, bitmap, null, null, mmListener);
         //mStatusesAPI.update(content,null,null,mListener);
     }
 
-     /*＊
-     ＊Sina登录回调
-     */
+    public void shareToSinafriend(Activity activity){
+        activity.startActivity(new Intent(activity, WBShareToMessageFriendActivity.class));
+    }
+
+    /*＊
+    ＊Sina登录回调
+    */
     private class AuthListener implements WeiboAuthListener {
 
         @Override
@@ -113,7 +120,7 @@ public class SinaWeiboPlatform extends Platform {
                 mUsersAPI = new UsersAPI(activity, com.example.xuqi.qqdemo.Constants.SINA_APP_KEY, mAccessToken);
                 long uid = Long.parseLong(mAccessToken.getUid());
                 mUsersAPI.show(uid, mListener);
-                listener.onComplete(SinaWeiboPlatform.this, mAccessToken,Platform.Sina);
+                listener.onComplete(SinaWeiboPlatform.this, mAccessToken, Platform.Sina);
             } else {
                 // 以下几种情况，您会收到 Code：
                 // 1. 当您未在平台上注册的应用程序的包名与签名时；
@@ -126,6 +133,7 @@ public class SinaWeiboPlatform extends Platform {
                 }
                 Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
             }
+            listener.onComplete(SinaWeiboPlatform.this,mAccessToken,Platform.Sina);
         }
 
         @Override

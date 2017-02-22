@@ -10,35 +10,30 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.xuqi.qqdemo.Sinaapi.UsersAPI;
 import com.example.xuqi.qqdemo.Sinaapi.Util;
 import com.example.xuqi.qqdemo.util.Platform;
 import com.example.xuqi.qqdemo.util.PlatformActionListener;
 import com.example.xuqi.qqdemo.util.SinaWeiboPlatform;
 import com.example.xuqi.qqdemo.util.TencentPlatform;
-import com.sina.weibo.sdk.auth.Oauth2AccessToken;
-import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.example.xuqi.qqdemo.widget.LoadingDialog;
 import com.tencent.connect.common.Constants;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-import com.tencent.tauth.Tencent;
 
 import static com.example.xuqi.qqdemo.Constants.WX_APPId;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button QQbutton, Sinabutton;
-    private Oauth2AccessToken mAccessToken;
-    private UsersAPI mUsersAPI;
-    public static Tencent mTencent;
     public static IWXAPI wxapi;
-    private SsoHandler mSsoHandler;
     private String type = "";
     private TencentPlatform mTencentPlatform;
     private SinaWeiboPlatform mSinaWeiboPlatform;
+    private LoadingDialog mProgressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Sinabutton = (Button) findViewById(R.id.Sina_login_button);
         QQbutton.setOnClickListener(this);
         Sinabutton.setOnClickListener(this);
+        mProgressDialog = new LoadingDialog(MainActivity.this);
     }
 
     @Override
@@ -56,12 +52,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (type.equals("QQ")) {
             if (requestCode == Constants.REQUEST_LOGIN) {
                 if (resultCode == -1) {
-                    mTencentPlatform.onActivityResult(requestCode,resultCode,data);
+                    mTencentPlatform.onActivityResult(requestCode, resultCode, data);
                 }
             }
         } else if (type.equals("Sina")) {
             super.onActivityResult(requestCode, resultCode, data);
-            mSinaWeiboPlatform.onActivityResult(requestCode,resultCode,data);
+            mSinaWeiboPlatform.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -70,10 +66,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.QQ_login_button:
                 type = "QQ";
-                if (QQbutton.getText().equals("QQ")){
+                if (QQbutton.getText().equals("QQ")) {
                     mTencentPlatform.setPlatformActionListener(mPlatformActionListener).authrize(this);
-                    }
-                else {
+                } else {
                     mTencentPlatform.logout(this);
                     QQbutton.setText("QQ");
                 }
@@ -149,20 +144,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private PlatformActionListener mPlatformActionListener = new PlatformActionListener() {
         @Override
         public void onStart(Platform platform, int type) {
+            LoadingDialog.showProgressDialog("正在登录", MainActivity.this);
             if (type == Platform.QQ) {
                 //showLoadingDialog(getString(R.string.register_login_loging));
+            }
+            else if(type == Platform.Sina){
+
             }
         }
 
         @Override
         public void onComplete(Platform platform, Object obj, int kind) {
+            LoadingDialog.hideProgressDialog(MainActivity.this);
             Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
             if (kind == Platform.QQ) {
                 if (obj != null) {
                     QQbutton.setText("注销");
                 }
             } else if (kind == Platform.Sina) {
-                    Sinabutton.setText("注销");
+                Sinabutton.setText("注销");
             }
         }
 
@@ -178,4 +178,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(MainActivity.this, "CANCEL", Toast.LENGTH_SHORT).show();
         }
     };
+
+
 }

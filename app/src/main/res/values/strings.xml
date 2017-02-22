@@ -14,4 +14,8 @@
     <string name="weibosdk_demo_toast_auth_success">授权成功</string>
     <string name="weibosdk_demo_toast_auth_failed">授权失败</string>
     <string name="weibosdk_demo_toast_auth_canceled">取消授权</string>
+    <string name="share_url">url分享到私信</string>
+    <string name="share_card">card分享到私信</string>
+    <string name="buttonsharetoSinaFriend">分享到微博私信</string>
+    <string name="msg_load_ing">正在加载</string>
 </resources>

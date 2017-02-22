@@ -39,6 +39,7 @@ public class TencentPlatform extends Platform {
     @Override
     public void authrize(Activity activity) {
         this.activity = activity;
+        listener.onStart(TencentPlatform.this,Platform.QQ);
         mTencent.logout(activity);
         mTencent.login(activity,QQ_SCOPE,loginListener);
     }
@@ -62,6 +63,8 @@ public class TencentPlatform extends Platform {
 
         // qq 分享必须设置分享的类型,SHARE_TO_QQ_TYPE_DEFAULT为图文混排默认类型.
         bundle.putInt(com.tencent.connect.share.QQShare.SHARE_TO_QQ_KEY_TYPE, com.tencent.connect.share.QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
+        if(mTencent == null)
+            mTencent = Tencent.createInstance(QQ_AppId, activity);
         mTencent.shareToQQ(activity, bundle, shareListener);
     }
 

@@ -16,7 +16,7 @@ import static android.view.View.GONE;
 
 public class UserInfoActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView icon;
-    private Button share_Button, share_Zone_Button, share_Sina_Button;
+    private Button share_Button, share_Zone_Button, share_Sina_Button, share_SinaFriend_Button;
     public String name, url, type;
 
     @Override
@@ -33,17 +33,23 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         share_Zone_Button = (Button) findViewById(R.id.share_QQZone_button);
         share_Button = (Button) findViewById(R.id.share_QQ_button);
         share_Sina_Button = (Button) findViewById(R.id.share_Sina_button);
+        share_SinaFriend_Button = (Button) findViewById(R.id.share_SinaFriend_button);
+
         share_Button.setOnClickListener(this);
         share_Zone_Button.setOnClickListener(this);
         share_Sina_Button.setOnClickListener(this);
+        share_SinaFriend_Button.setOnClickListener(this);
+
         if (type.equals("QQ")) {
             share_Sina_Button.setVisibility(GONE);
+            share_SinaFriend_Button.setVisibility(GONE);
             share_Button.setVisibility(View.VISIBLE);
             share_Zone_Button.setVisibility(View.VISIBLE);
         } else if (type.equals("Sina")) {
             share_Button.setVisibility(GONE);
             share_Zone_Button.setVisibility(GONE);
             share_Sina_Button.setVisibility(View.VISIBLE);
+            share_SinaFriend_Button.setVisibility(View.VISIBLE);
         } else {
             share_Button.setText(getString(R.string.buttonsharetoWX));
             share_Zone_Button.setText(getString(R.string.buttonsharetoWXSNS));
@@ -65,6 +71,9 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
             case R.id.share_Sina_button:
                 (new SinaWeiboPlatform(this)).shareToSina(this);
                 break;
+            case R.id.share_SinaFriend_button:
+                (new SinaWeiboPlatform(this)).shareToSinafriend(this);
+//                startActivity(new Intent(UserInfoActivity.this, WBShareToMessageFriendActivity.class));
             default:
                 break;
         }
