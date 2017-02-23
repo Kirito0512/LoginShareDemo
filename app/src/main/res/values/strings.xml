@@ -18,4 +18,6 @@
     <string name="share_card">card分享到私信</string>
     <string name="buttonsharetoSinaFriend">分享到微博私信</string>
     <string name="msg_load_ing">正在加载</string>
+    <string name="select_from_gallery">从图库中选取</string>
+    <string name="take_photo">拍摄照片</string>
 </resources>
