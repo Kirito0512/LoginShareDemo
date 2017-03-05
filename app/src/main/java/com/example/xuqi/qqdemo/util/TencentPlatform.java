@@ -113,8 +113,9 @@ public class TencentPlatform extends Platform {
                             user.setUserId(10000);
                             user.setName(nickName);
                             user.setHeadPhoto(iconUrl);
+                            user.setSource("QQ");
                             UserSessionManager.setCurrentUser(user);
-                            MainActivity.showActivity(activity, nickName, iconUrl, "QQ");
+                            MainActivity.showActivity(activity);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

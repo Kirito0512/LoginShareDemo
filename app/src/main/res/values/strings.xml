@@ -28,6 +28,9 @@
     <string name="register_login_btn">前往～～还没定好</string>
     <string name="register_login_weixin">微信</string>
     <string name="register_login_qq">QQ</string>
-    <string name="register_login_sina">新浪微博</string>
+    <string name="register_login_sina">SINA</string>
     <string name="register_login_choose">选择第三方登录</string>
+    <string name="logout">退出登录</string>
+    <string name="default_name">董小姐</string>
+    <string name="default_mail">xuqi19950424@gmail.com</string>
 </resources>

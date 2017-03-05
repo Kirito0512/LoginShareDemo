@@ -1,5 +1,6 @@
 package com.example.xuqi.qqdemo.util;
 
+import android.app.Activity;
 import android.os.Environment;
 import android.util.Log;
 
@@ -15,6 +16,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import static android.content.ContentValues.TAG;
+import static com.example.xuqi.qqdemo.LoginActivity.mSinaWeiboPlatform;
+import static com.example.xuqi.qqdemo.LoginActivity.mTencentPlatform;
 
 /**
  * Created by xuqi on 17/2/24.
@@ -125,6 +128,23 @@ public class UserSessionManager {
             }
         }
 
+    }
+
+    public synchronized static void reSetCurrentUser() {
+        getInstance().currentUser = getInstance().fakeUser();
+        File dir = getConfigDir();
+        File loginData = new File(dir, STORE_FILE_EN);
+        if (loginData.exists()) {
+            loginData.delete();
+        }
+    }
+
+    public static void logout(Activity activity) {
+        if (getCurrentUser().getSource().equals("QQ")) {
+            mTencentPlatform.logout(activity);
+        } else if (getCurrentUser().equals("SINA")) {
+            mSinaWeiboPlatform.logout(activity);
+        }
     }
 
     public static boolean isMySelf(int userid) {

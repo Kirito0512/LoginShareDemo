@@ -28,8 +28,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView QQbutton, Sinabutton;
     public static IWXAPI wxapi;
     private String type = "";
-    private TencentPlatform mTencentPlatform;
-    private SinaWeiboPlatform mSinaWeiboPlatform;
+    public static TencentPlatform mTencentPlatform;
+    public static  SinaWeiboPlatform mSinaWeiboPlatform;
     private LoadingDialog mProgressDialog;
     public static final String Bmob_Application_Id = "3f6b441de3147f470ca306a4f4bf0a23";
     @Override
@@ -69,21 +69,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (view.getId()) {
             case R.id.QQ_login_button:
                 type = "QQ";
-                if (QQbutton.getText().equals("QQ")) {
+                if (QQbutton.getText().equals("QQ"))
                     mTencentPlatform.setPlatformActionListener(mPlatformActionListener).authrize(this);
-                } else {
-                    mTencentPlatform.logout(this);
-                    QQbutton.setText("QQ");
-                }
                 break;
             case R.id.Sina_login_button:
                 type = "Sina";
                 if (Sinabutton.getText().equals("SINA"))
                     mSinaWeiboPlatform.setPlatformActionListener(mPlatformActionListener).authrize(this);
-                else {
-                    mSinaWeiboPlatform.logout(this);
-                    Sinabutton.setText("SINA");
-                }
                 break;
             default:
                 break;
@@ -159,13 +151,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void onComplete(Platform platform, Object obj, int kind) {
             LoadingDialog.hideProgressDialog(LoginActivity.this);
             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-            if (kind == Platform.QQ) {
-                if (obj != null) {
-                    QQbutton.setText("注销");
-                }
-            } else if (kind == Platform.Sina) {
-                Sinabutton.setText("注销");
-            }
+//            if (kind == Platform.QQ) {
+//                if (obj != null) {
+//                    QQbutton.setText("注销");
+//                }
+//            } else if (kind == Platform.Sina) {
+//                Sinabutton.setText("注销");
+//            }
         }
 
         @Override

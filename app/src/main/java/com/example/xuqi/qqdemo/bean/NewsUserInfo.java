@@ -12,8 +12,19 @@ public class NewsUserInfo extends BmobObject implements Serializable {
     private int userId;
     private String name;
     private String headPhoto;
+    // 第三方平台
+    private String source;
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public int getUserId() {
+
         return userId;
     }
 

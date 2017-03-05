@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-        
+
         // 导入NavigationView的头部布局文件
         View headerView = navView.getHeaderView(0);
         name = (TextView) headerView.findViewById(R.id.name);
@@ -88,8 +88,13 @@ public class MainActivity extends AppCompatActivity {
         icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
+                if (UserSessionManager.isAleadyLogin()) {
+                    Intent intent = new Intent(MainActivity.this, PersonalPageActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -134,11 +139,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processIntent() {
-        Intent intent = getIntent();
-        String nickname = intent.getStringExtra("name");
-        String headUrl = intent.getStringExtra("url");
-        name.setText(nickname);
-        Glide.with(this).load(headUrl).into(icon);
+        checkIsLogin();
+        resetViews();
     }
 
     private void checkIsLogin() {
@@ -149,11 +151,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void showActivity(Context context, String name, String url, String type) {
+    public static void showActivity(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra("name", name);
-        intent.putExtra("url", url);
-        intent.putExtra("type", type);
+//        intent.putExtra("name", name);
+//        intent.putExtra("url", url);
+//        intent.putExtra("type", type);
         context.startActivity(intent);
+    }
+
+    public void resetViews(){
+        if(!UserSessionManager.isAleadyLogin()) {
+            name.setText("董小姐");
+            icon.setImageResource(R.drawable.nav_icon);
+        }
     }
 }

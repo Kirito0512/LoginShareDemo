@@ -169,8 +169,9 @@ public class SinaWeiboPlatform extends Platform {
                         user.setUserId(10001);
                         user.setName(nickName);
                         user.setHeadPhoto(iconUrl);
+                        user.setSource("SINA");
                         UserSessionManager.setCurrentUser(user);
-                        MainActivity.showActivity(activity, nickName, iconUrl, "Sina");
+                        MainActivity.showActivity(activity);
                     } else {
                         Toast.makeText(activity, response, Toast.LENGTH_LONG).show();
                     }

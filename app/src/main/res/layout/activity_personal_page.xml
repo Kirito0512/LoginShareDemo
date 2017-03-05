@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_personal_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.example.xuqi.qqdemo.PersonalPageActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:background="@color/colorPrimaryDark">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/personalpage_icon_image"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/nav_icon"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:id="@+id/personal_page_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/personalpage_icon_image"
+            android:text="@string/default_name"
+            android:layout_centerHorizontal="true"/>
+
+
+        <TextView
+            android:id="@+id/personal_page_mail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/personal_page_name"
+            android:text="@string/default_mail"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/top_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_7"
+        android:layout_above="@+id/logout_button"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+
+    <TextView
+        android:id="@+id/logout_button"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/logout"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/red"
+        android:gravity="center"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+
+    <View
+        android:id="@+id/bottom_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_7"
+        android:layout_marginTop="24dp"
+        android:layout_below="@+id/top_line"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+
+</RelativeLayout>
