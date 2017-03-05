@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.xuqi.qqdemo.MainActivity;
 import com.example.xuqi.qqdemo.R;
-import com.example.xuqi.qqdemo.UserInfoActivity;
+import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
@@ -107,7 +108,13 @@ public class TencentPlatform extends Platform {
                             String nickName = info.getString("nickname");//获取用户昵称
                             String iconUrl = info.getString("figureurl_qq_2");//获取用户头像的url
                             Toast.makeText(activity, "昵称：" + nickName, Toast.LENGTH_SHORT).show();
-                            UserInfoActivity.showActivity(activity, nickName, iconUrl, "QQ");
+//                            UserInfoActivity.showActivity(activity, nickName, iconUrl, "QQ");
+                            NewsUserInfo user = new NewsUserInfo();
+                            user.setUserId(10000);
+                            user.setName(nickName);
+                            user.setHeadPhoto(iconUrl);
+                            UserSessionManager.setCurrentUser(user);
+                            MainActivity.showActivity(activity, nickName, iconUrl, "QQ");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

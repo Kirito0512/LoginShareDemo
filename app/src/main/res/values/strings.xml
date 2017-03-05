@@ -20,4 +20,14 @@
     <string name="msg_load_ing">正在加载</string>
     <string name="select_from_gallery">从图库中选取</string>
     <string name="take_photo">拍摄照片</string>
+    <string name="collection">收藏夹</string>
+    <string name="thumb_up">好评鼓励</string>
+    <string name="suggest">意见反馈</string>
+    <string name="set"> 设置 </string>
+    <string name="register_login_et_hint">请输入手机号码</string>
+    <string name="register_login_btn">前往～～还没定好</string>
+    <string name="register_login_weixin">微信</string>
+    <string name="register_login_qq">QQ</string>
+    <string name="register_login_sina">新浪微博</string>
+    <string name="register_login_choose">选择第三方登录</string>
 </resources>

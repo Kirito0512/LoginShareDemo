@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_call"
+            android:icon="@drawable/ic_favorite_border_black_24dp"
+            android:title="@string/collection" />
+        <item
+            android:id="@+id/nav_suggest"
+            android:icon="@drawable/ic_suggest_black_24dp"
+            android:title="@string/suggest"/>
+        <item
+            android:id="@+id/nav_evaluate"
+            android:icon="@drawable/ic_thumb_up_black_24dp"
+            android:title="@string/thumb_up" />
+        <item
+            android:id="@+id/nav_set"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/set" />
+    </group>
+</menu>

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.xuqi.qqdemo.Constants;
+import com.example.xuqi.qqdemo.MainActivity;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.Sinaapi.AccessTokenKeeper;
 import com.example.xuqi.qqdemo.Sinaapi.ErrorInfo;
@@ -19,7 +20,7 @@ import com.example.xuqi.qqdemo.Sinaapi.StatusList;
 import com.example.xuqi.qqdemo.Sinaapi.StatusesAPI;
 import com.example.xuqi.qqdemo.Sinaapi.UsersAPI;
 import com.example.xuqi.qqdemo.Sinaapi.WBShareToMessageFriendActivity;
-import com.example.xuqi.qqdemo.UserInfoActivity;
+import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
@@ -156,7 +157,7 @@ public class SinaWeiboPlatform extends Platform {
         @Override
         public void onComplete(String response) {
             if (!TextUtils.isEmpty(response)) {
-                //LogUtil.i(TAG, response);User.java
+                //LogUtil.i(TAG, response)
                 // 调用 User#parse 将JSON串解析成User对象
                 try {
                     JSONObject json = new JSONObject(response);
@@ -164,7 +165,12 @@ public class SinaWeiboPlatform extends Platform {
                         String nickName = json.getString("screen_name");//获取用户昵称
                         String iconUrl = json.getString("profile_image_url");//获取用户头像的url
                         Toast.makeText(activity, "昵称：" + nickName, Toast.LENGTH_SHORT).show();
-                        UserInfoActivity.showActivity(activity, nickName, iconUrl, "Sina");
+                        NewsUserInfo user = new NewsUserInfo();
+                        user.setUserId(10001);
+                        user.setName(nickName);
+                        user.setHeadPhoto(iconUrl);
+                        UserSessionManager.setCurrentUser(user);
+                        MainActivity.showActivity(activity, nickName, iconUrl, "Sina");
                     } else {
                         Toast.makeText(activity, response, Toast.LENGTH_LONG).show();
                     }

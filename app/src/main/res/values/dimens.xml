@@ -3,4 +3,16 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="base_textsize_title_18sp">18sp</dimen>
+    <dimen name="base_textsize_large_20sp">20sp</dimen>
+    <dimen name="base_textsize_largest_25sp">25sp</dimen>
+    <dimen name="base_textsize_largest_50sp">50sp</dimen>
+    <dimen name="base_textsize_base_15sp">15sp</dimen>
+    <dimen name="base_textsize_large_16sp">16sp</dimen>
+    <dimen name="base_textsize_small_14sp">14sp</dimen>
+    <dimen name="base_textsize_smaller_12sp">12sp</dimen>
+    <dimen name="base_textsize_smaller_11sp">11sp</dimen>
+    <dimen name="base_textsize_smallest_10sp">10sp</dimen>
+    <dimen name="divider_all_height">1px</dimen>
 </resources>
