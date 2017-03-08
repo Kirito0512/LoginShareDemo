@@ -4,12 +4,11 @@
     android:id="@+id/activity_personal_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context="com.example.xuqi.qqdemo.PersonalPageActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="180dp"
         android:background="@color/colorPrimaryDark">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -25,8 +24,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/personalpage_icon_image"
             android:text="@string/default_name"
-            android:layout_centerHorizontal="true"/>
-
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"/>
 
         <TextView
             android:id="@+id/personal_page_mail"
@@ -34,7 +33,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/personal_page_name"
             android:text="@string/default_mail"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"/>
     </RelativeLayout>
 
     <View

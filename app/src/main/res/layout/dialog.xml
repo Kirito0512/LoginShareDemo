@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_1"
+    android:orientation="vertical">
+
+    <!--<TextView-->
+        <!--android:id="@+id/dialog_tint"-->
+        <!--android:layout_width="210dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_above="@+id/picture_layout"-->
+        <!--android:text="@string/choose_head"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:layout_marginTop="10dp"/>-->
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@color/black_alpha_60"-->
+        <!--android:layout_above="@+id/picture_layout"-->
+        <!--android:layout_marginBottom="5dp"/>-->
+
+    <LinearLayout
+        android:id="@+id/picture_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/take_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_photo_camera_pink_500_48dp"
+            android:text="@string/take_picture"
+            android:gravity="center"
+            android:layout_marginLeft="50dp"/>
+
+        <TextView
+            android:id="@+id/choose_album"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_photo_green_500_48dp"
+            android:text="@string/choose_album"
+            android:gravity="center"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black_alpha_60"
+        android:layout_below="@+id/picture_layout"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/cancel_choose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:textSize="14sp"
+        android:textColor="@color/cash_record_status_2"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

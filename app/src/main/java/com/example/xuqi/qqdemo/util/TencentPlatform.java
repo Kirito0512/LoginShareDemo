@@ -12,6 +12,7 @@ import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
+import com.tencent.open.SocialConstants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -45,6 +46,7 @@ public class TencentPlatform extends Platform {
         mTencent.login(activity,QQ_SCOPE,loginListener);
     }
 
+    // 退出登录
     public void logout(Activity activity){
         mTencent.logout(activity);
     }
@@ -85,6 +87,12 @@ public class TencentPlatform extends Platform {
         mTencent.shareToQzone(activity, params, shareListener);
     }
 
+    public void doSetAvatar(Activity activity,String imagePath) {
+        Bundle params = new Bundle();
+        params.putString(SocialConstants.PARAM_AVATAR_URI, imagePath);
+        mTencent.setAvatar(activity, params, shareListener);
+    }
+
     // QQ登录回调
     public IUiListener loginListener = new IUiListener() {
         @Override
@@ -108,7 +116,6 @@ public class TencentPlatform extends Platform {
                             String nickName = info.getString("nickname");//获取用户昵称
                             String iconUrl = info.getString("figureurl_qq_2");//获取用户头像的url
                             Toast.makeText(activity, "昵称：" + nickName, Toast.LENGTH_SHORT).show();
-//                            UserInfoActivity.showActivity(activity, nickName, iconUrl, "QQ");
                             NewsUserInfo user = new NewsUserInfo();
                             user.setUserId(10000);
                             user.setName(nickName);

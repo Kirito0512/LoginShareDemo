@@ -141,8 +141,12 @@ public class UserSessionManager {
 
     public static void logout(Activity activity) {
         if (getCurrentUser().getSource().equals("QQ")) {
+            if (mTencentPlatform == null)
+                mTencentPlatform = new TencentPlatform(activity);
             mTencentPlatform.logout(activity);
         } else if (getCurrentUser().equals("SINA")) {
+            if (mSinaWeiboPlatform == null)
+                mSinaWeiboPlatform = new SinaWeiboPlatform(activity);
             mSinaWeiboPlatform.logout(activity);
         }
     }
