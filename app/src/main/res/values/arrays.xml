@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+  <string-array name="tab_titles">
+    <item>垂直List</item>
+    <item>水平List</item>
+    <item>垂直Grid</item>
+    <item>水平Grid</item>
+    <item>瀑布Staggered</item>
+  </string-array>
+
+  <string-array name="choose_log_click">
+    <item>收藏</item>
+    <item>删除</item>
+  </string-array>
+</resources>

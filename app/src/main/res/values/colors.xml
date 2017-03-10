@@ -276,4 +276,7 @@
     <color name="tab_red_color">#ff5046</color>
 
     <color name="green_half">#803eff67</color>
+
+    <color name="main_blue_light">#3F56B5</color>
+    <color name="main_blue_dark">#30459E</color>
 </resources>
