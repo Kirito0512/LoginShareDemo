@@ -6,6 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    ViewPager滚动时已经将滚动事件通知到了AppBarLayout，
+    app;layout_scrollFlags可以实现对滚动事件的响应
+    scroll表示当ViewPager向上滚动的时候，ToolBar会向上滚动并实现隐藏
+    enterAlways表示当ViewPager向下滚动的时候，ToolBar会跟着一起向下滚动并重新显示
+    snap表示当ToolBar还没有完全隐藏或显示的时候，会根据当前滚动的距离，自动选择隐藏还是显示
+
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/id_coordinatorlayout"
@@ -50,6 +56,7 @@
         <!--并且下面的这个控件必须是可滚动的。-->
         <!--当设置了layout_behavior的控件滑动时，就会触发设置了layout_scrollFlags的控件发生状态的改变。-->
 
+        <!--appbar_scrolling_view_behavior由Design Support库提供，与AppBarLayout合在一起实现-->
         <android.support.v4.view.ViewPager
             android:id="@+id/id_viewpager"
             android:layout_width="match_parent"
