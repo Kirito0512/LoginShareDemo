@@ -14,17 +14,18 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 允许读取手机状态 用于创建BmobInstallation -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
+        android:name=".application.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait">
+            android:name=".view.SplashActivity"
+            android:theme="@style/splashFullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,7 +57,7 @@
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".UserInfoActivity" />
+        <activity android:name=".view.UserInfoActivity" />
         <activity
             android:name=".Sinaapi.WBShareToMessageFriendActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -74,8 +75,17 @@
                     android:scheme="weiboDemo" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".PersonalPageActivity"></activity>
+        <activity android:name=".view.LoginActivity" />
+        <activity android:name=".view.PersonalPageActivity" />
+        <!--主页-->
+        <activity android:name=".view.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+        </activity>
+        <!--引导页-->
+        <activity
+            android:name=".view.GuidActivity"
+            android:theme="@style/splashFullScreen"/>
     </application>
 
 </manifest>

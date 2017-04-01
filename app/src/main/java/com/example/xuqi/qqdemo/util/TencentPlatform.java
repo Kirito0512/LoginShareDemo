@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.example.xuqi.qqdemo.MainActivity;
+import com.example.xuqi.qqdemo.view.MainActivity;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.tencent.connect.UserInfo;

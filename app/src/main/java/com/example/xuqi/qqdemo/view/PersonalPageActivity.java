@@ -1,4 +1,4 @@
-package com.example.xuqi.qqdemo;
+package com.example.xuqi.qqdemo.view;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.example.xuqi.qqdemo.util.TencentPlatform;
 import com.example.xuqi.qqdemo.util.UserSessionManager;

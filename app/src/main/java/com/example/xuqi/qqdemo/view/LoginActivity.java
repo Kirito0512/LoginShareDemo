@@ -1,19 +1,27 @@
-package com.example.xuqi.qqdemo;
+package com.example.xuqi.qqdemo.view;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.Sinaapi.Util;
+import com.example.xuqi.qqdemo.bean.NewsUser;
+import com.example.xuqi.qqdemo.util.L;
 import com.example.xuqi.qqdemo.util.Platform;
 import com.example.xuqi.qqdemo.util.PlatformActionListener;
 import com.example.xuqi.qqdemo.util.SinaWeiboPlatform;
+import com.example.xuqi.qqdemo.util.SnackbarUtil;
 import com.example.xuqi.qqdemo.util.TencentPlatform;
 import com.example.xuqi.qqdemo.widget.LoadingDialog;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
@@ -22,6 +30,11 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
+import cn.bmob.sms.BmobSMS;
+import cn.bmob.sms.exception.BmobException;
+import cn.bmob.sms.listener.RequestSMSCodeListener;
+import cn.bmob.v3.listener.SaveListener;
+
 import static com.example.xuqi.qqdemo.Constants.WX_APPId;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -29,9 +42,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static IWXAPI wxapi;
     private String type = "";
     public static TencentPlatform mTencentPlatform;
-    public static  SinaWeiboPlatform mSinaWeiboPlatform;
+    public static SinaWeiboPlatform mSinaWeiboPlatform;
     private LoadingDialog mProgressDialog;
-    public static final String Bmob_Application_Id = "3f6b441de3147f470ca306a4f4bf0a23";
+    private EditText et_phone, et_vercode;
+    private TextView tv_send;
+    private Button btn_login;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +63,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         QQbutton.setOnClickListener(this);
         Sinabutton.setOnClickListener(this);
         mProgressDialog = new LoadingDialog(LoginActivity.this);
+        et_phone = (EditText) findViewById(R.id.register_login_phone_et);
+        et_vercode = (EditText) findViewById(R.id.register_login_vercode_et);
+        tv_send = (TextView) findViewById(R.id.request_vercode);
+        tv_send.setOnClickListener(this);
+        btn_login = (Button) findViewById(R.id.register_login_phone_btn);
+        btn_login.setOnClickListener(this);
     }
 
 
@@ -66,6 +88,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View view) {
+        final String ph_number = et_phone.getText().toString();
+        final String ph_vercode = et_vercode.getText().toString();
         switch (view.getId()) {
             case R.id.QQ_login_button:
                 type = "QQ";
@@ -76,6 +100,72 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 type = "Sina";
                 if (Sinabutton.getText().equals("SINA"))
                     mSinaWeiboPlatform.setPlatformActionListener(mPlatformActionListener).authrize(this);
+                break;
+            case R.id.request_vercode:
+                if (ph_number == null && ph_number.length() != 11) {
+                    SnackbarUtil.show(view, "请输入手机号", 0);
+                } else {
+                    L.d("电话号码正确");
+                    //进行获取验证码和倒计时1分钟操作
+                    // "SmsDemo"为短信模版名称
+                    BmobSMS.requestSMSCode(this, ph_number, "SmsDemo", new RequestSMSCodeListener() {
+                        @Override
+                        public void done(Integer integer, BmobException e) {
+                            if (e == null) {
+                                // 发送成功时，让获取验证码按钮不可点击，且为灰色
+                                tv_send.setClickable(false);
+                                tv_send.setBackgroundColor(Color.GRAY);
+                                Toast.makeText(LoginActivity.this, "验证码发送成功，请尽快使用", Toast.LENGTH_SHORT).show();
+                                /**
+                                 * 倒计时一分钟的操作
+                                 *
+                                 */
+                                new CountDownTimer(6000, 1000) {
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
+                                        tv_send.setText(millisUntilFinished / 1000 + "秒");
+                                    }
+
+                                    @Override
+                                    public void onFinish() {
+                                        tv_send.setClickable(true);
+                                        tv_send.setText("重新发送");
+                                    }
+                                }.start();
+                            } else {
+                                L.d("xuqi  "+e.toString());
+                                Toast.makeText(LoginActivity.this, "验证码发送失败", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+                break;
+            case R.id.register_login_phone_btn:
+                if (ph_number.length() == 0 || ph_number.length() != 11 || ph_vercode.length() == 0) {
+                    Toast.makeText(LoginActivity.this, "不合法输入", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Bmob手机号码一键注册或登录
+//                    NewsUser.signOrLoginByMobilePhone(ph_number, ph_vercode, new LogInListener<NewsUser>() {
+//                        @Override
+//                        public void done(NewsUser bmobUser, cn.bmob.v3.exception.BmobException e) {
+//                            Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                            NewsUser user = new NewsUser();
+                            user.setMobilePhoneNumber(ph_number);
+                            user.setUsername("董小姐" + ph_number);
+                            user.setPassword("666666");
+                            user.signOrLogin(ph_vercode, new SaveListener<NewsUser>() {
+                                @Override
+                                public void done(NewsUser bmobUser, cn.bmob.v3.exception.BmobException e) {
+                                    if (e == null) {
+                                        Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, "注册失败", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+//                        }
+//                    });
+                }
                 break;
             default:
                 break;

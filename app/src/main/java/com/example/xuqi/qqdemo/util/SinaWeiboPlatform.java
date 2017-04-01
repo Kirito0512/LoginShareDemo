@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.xuqi.qqdemo.Constants;
-import com.example.xuqi.qqdemo.MainActivity;
+import com.example.xuqi.qqdemo.view.MainActivity;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.Sinaapi.AccessTokenKeeper;
 import com.example.xuqi.qqdemo.Sinaapi.ErrorInfo;
@@ -47,7 +47,7 @@ public class SinaWeiboPlatform extends Platform {
 
 
     @Override
-    public void authrize(Activity activity) {
+    public void authrize(final Activity activity) {
         try {
             this.activity = activity;
             listener.onStart(SinaWeiboPlatform.this,Platform.Sina);

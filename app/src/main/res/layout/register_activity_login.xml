@@ -18,55 +18,81 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/center_view"
-        android:layout_marginBottom="30dp"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:id="@+id/relativeLayout">
 
         <EditText
             android:id="@+id/register_login_phone_et"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:drawableLeft="@drawable/login_mobilephone_icon"
+            android:hint="@string/register_login_et_hint"
             android:drawablePadding="5dp"
-            android:gravity="center"
+            android:gravity="left"
             android:inputType="phone"
-            android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
-            android:textSize="@dimen/base_textsize_large_16sp"
-            android:visibility="invisible" />
+            android:textSize="@dimen/base_textsize_large_16sp"/>
 
 
         <TextView
-            android:id="@+id/register_login_phone_tv"
-            android:layout_width="match_parent"
+            android:id="@+id/request_vercode"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:drawableLeft="@drawable/login_mobilephone_icon"
+            android:text="@string/send_vercode"
+            android:textSize="@dimen/base_textsize_large_16sp"
+            android:layout_alignBottom="@+id/register_login_phone_et"
+            android:layout_above="@+id/line"
             android:gravity="center"
-            android:hint="@string/register_login_et_hint"
-            android:inputType="phone"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:textSize="@dimen/base_textsize_large_16sp" />
+            android:layout_alignRight="@+id/register_login_vercode_et"
+            android:layout_toRightOf="@+id/register_login_phone_et"/>
 
         <View
+            android:id="@+id/line"
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_all_height"
             android:layout_below="@id/register_login_phone_et"
             android:layout_marginTop="2dp"
             android:background="@color/white" />
 
+
+        <EditText
+            android:id="@+id/register_login_vercode_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:layout_below="@+id/register_login_phone_et"
+            android:drawableLeft="@drawable/ic_lock_outline_white_24dp"
+            android:drawablePadding="5dp"
+            android:gravity="left"
+            android:paddingBottom="5dp"
+            android:paddingTop="10dp"
+            android:hint="@string/edit_vercode"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textSize="@dimen/base_textsize_large_16sp"
+            android:visibility="visible" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_all_height"
+            android:layout_below="@id/register_login_vercode_et"
+            android:layout_marginTop="2dp"
+            android:background="@color/white" />
+
+
         <Button
             android:id="@+id/register_login_phone_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/register_login_phone_et"
+            android:layout_below="@id/register_login_vercode_et"
             android:layout_marginTop="20dp"
             android:background="@drawable/corner_red_bg"
             android:padding="10dp"

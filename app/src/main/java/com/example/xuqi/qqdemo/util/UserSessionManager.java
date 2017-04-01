@@ -16,8 +16,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import static android.content.ContentValues.TAG;
-import static com.example.xuqi.qqdemo.LoginActivity.mSinaWeiboPlatform;
-import static com.example.xuqi.qqdemo.LoginActivity.mTencentPlatform;
+import static com.example.xuqi.qqdemo.view.LoginActivity.mSinaWeiboPlatform;
+import static com.example.xuqi.qqdemo.view.LoginActivity.mTencentPlatform;
 
 /**
  * Created by xuqi on 17/2/24.

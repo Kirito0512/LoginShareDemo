@@ -1,8 +1,9 @@
-package com.example.xuqi.qqdemo;
+package com.example.xuqi.qqdemo.view;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -16,25 +17,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.adapter.MyViewPagerAdapter;
 import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.example.xuqi.qqdemo.fragment.MainSlidingFragment;
+import com.example.xuqi.qqdemo.util.SnackbarUtil;
 import com.example.xuqi.qqdemo.util.UserSessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bmob.v3.Bmob;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
-import static com.example.xuqi.qqdemo.LoginActivity.Bmob_Application_Id;
 
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
@@ -53,18 +54,16 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private MyViewPagerAdapter mViewPagerAdapter;
 
     private static final String TAG = "MainActivity";
+    private boolean mIsExit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 初始化Bmob
-        Bmob.initialize(this, Bmob_Application_Id);
-
         initViewPagerData();
 
-        configViews();
+        initViews();
 //
 //        NewsUserInfo user = new NewsUserInfo();
 //        user.setName("xuqi");
@@ -83,13 +82,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 //            }
 //        });
         checkIsLogin();
-
+        // Tencent Bugly手动crash
+        //CrashReport.testJavaCrash();
     }
 
     private void initViewPagerData() {
         // Tab的标题采用string-array的方法保存，在res/values/arrays.xml中写
         mTitles = getResources().getStringArray(R.array.tab_titles);
-
         //初始化填充到ViewPager中的Fragment集合
         mFragments = new ArrayList<>();
         for (int i = 0; i < mTitles.length; i++) {
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
     }
 
-    private void configViews() {
+    private void initViews() {
         // 初始化Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -127,13 +126,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             @Override
             public void onClick(View v) {
                 // SnackBar可以允许用户对当前情况进行简单的处理
-                Snackbar.make(v, "Data deleted", Snackbar.LENGTH_SHORT).setAction("撤销",
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(MainActivity.this, "Data restored", Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
+                SnackbarUtil.show(v,"Data deleted",Snackbar.LENGTH_SHORT);
+//                Snackbar.make(v, "Data deleted", Snackbar.LENGTH_SHORT).setAction("撤销",
+//                        new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                Toast.makeText(MainActivity.this, "Data restored", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }).show();
             }
         });
 
@@ -170,14 +170,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         mViewPager.setAdapter(mViewPagerAdapter);
         // 设置ViewPager最大缓存的页面个数
         mViewPager.setOffscreenPageLimit(5);
-        // 给ViewPager添加页面动态监听器（为了让Toolbar中的Title可以变化相应的Tab的标题）
+        // 给ViewPager添加页面滑动动态监听器（为了让Toolbar中的Title可以变化相应的Tab的标题）
         mViewPager.addOnPageChangeListener(this);
 
         mTabLayout.setTabMode(MODE_SCROLLABLE);
         // 将TabLayout和ViewPager进行关联，让两者联动起来
         mTabLayout.setupWithViewPager(mViewPager);
-        // 设置Tablayout的Tab显示ViewPager的适配器中的getPageTitle函数获取到的标题
-        mTabLayout.setTabsFromPagerAdapter(mViewPagerAdapter);
     }
 
     protected void onNewIntent(Intent intent) {
@@ -214,19 +212,17 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     public static void showActivity(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
-//        intent.putExtra("name", name);
-//        intent.putExtra("url", url);
-//        intent.putExtra("type", type);
         context.startActivity(intent);
     }
 
-    public void resetViews(){
-        if(!UserSessionManager.isAleadyLogin()) {
+    public void resetViews() {
+        if (!UserSessionManager.isAleadyLogin()) {
             name.setText("董小姐");
             icon.setImageResource(R.drawable.nav_icon);
         }
     }
 
+    // viewpager滑动监听的三个方法
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -240,5 +236,25 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mIsExit) {
+                this.finish();
+            } else {
+                SnackbarUtil.show(mViewPager, "再按一次退出", 0);
+                mIsExit = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mIsExit = false;
+                    }
+                }, 2000);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

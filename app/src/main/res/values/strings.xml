@@ -25,7 +25,7 @@
     <string name="suggest">意见反馈</string>
     <string name="set"> 设置 </string>
     <string name="register_login_et_hint">请输入手机号码</string>
-    <string name="register_login_btn">前往～～还没定好</string>
+    <string name="register_login_btn">确定</string>
     <string name="register_login_weixin">微信</string>
     <string name="register_login_qq">QQ</string>
     <string name="register_login_sina">SINA</string>
@@ -41,4 +41,10 @@
     <string name="item_clicked">item clicked !!</string>
     <string name="item_longclicked">item long clicked !!</string>
     <string name="close">关闭</string>
+    <string name="pull_refresh_prompt">正在加载</string>
+    <string name="guide_text">guide</string>
+    <string name="guid_pager_1">新鲜</string>
+    <string name="enter_main">进入主页</string>
+    <string name="send_vercode">发送验证码</string>
+    <string name="edit_vercode">请输入验证码</string>
 </resources>
