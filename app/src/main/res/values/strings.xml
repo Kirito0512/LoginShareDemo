@@ -47,4 +47,6 @@
     <string name="enter_main">进入主页</string>
     <string name="send_vercode">发送验证码</string>
     <string name="edit_vercode">请输入验证码</string>
+    <string name="loading_dialog_text">正在加载</string>
+    <string name="account_password_login">账号密码登录</string>
 </resources>

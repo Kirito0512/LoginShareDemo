@@ -23,7 +23,7 @@ import com.example.xuqi.qqdemo.util.PlatformActionListener;
 import com.example.xuqi.qqdemo.util.SinaWeiboPlatform;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
 import com.example.xuqi.qqdemo.util.TencentPlatform;
-import com.example.xuqi.qqdemo.widget.LoadingDialog;
+import com.example.xuqi.qqdemo.widget.MyLoadingDialog;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
@@ -43,10 +43,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String type = "";
     public static TencentPlatform mTencentPlatform;
     public static SinaWeiboPlatform mSinaWeiboPlatform;
-    private LoadingDialog mProgressDialog;
+    private MyLoadingDialog mProgressDialog;
     private EditText et_phone, et_vercode;
     private TextView tv_send;
     private Button btn_login;
+    private com.example.xuqi.qqdemo.view.LoadingDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +63,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Sinabutton = (TextView) findViewById(R.id.Sina_login_button);
         QQbutton.setOnClickListener(this);
         Sinabutton.setOnClickListener(this);
-        mProgressDialog = new LoadingDialog(LoginActivity.this);
+        mProgressDialog = new MyLoadingDialog(LoginActivity.this);
         et_phone = (EditText) findViewById(R.id.register_login_phone_et);
         et_vercode = (EditText) findViewById(R.id.register_login_vercode_et);
         tv_send = (TextView) findViewById(R.id.request_vercode);
         tv_send.setOnClickListener(this);
         btn_login = (Button) findViewById(R.id.register_login_phone_btn);
         btn_login.setOnClickListener(this);
+        dialog = new LoadingDialog(this);
     }
 
 
@@ -133,7 +135,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     }
                                 }.start();
                             } else {
-                                L.d("xuqi  "+e.toString());
+                                L.d("xuqi  " + e.toString());
                                 Toast.makeText(LoginActivity.this, "验证码发送失败", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -145,26 +147,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(LoginActivity.this, "不合法输入", Toast.LENGTH_SHORT).show();
                 } else {
                     // Bmob手机号码一键注册或登录
-//                    NewsUser.signOrLoginByMobilePhone(ph_number, ph_vercode, new LogInListener<NewsUser>() {
-//                        @Override
-//                        public void done(NewsUser bmobUser, cn.bmob.v3.exception.BmobException e) {
-//                            Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                            NewsUser user = new NewsUser();
-                            user.setMobilePhoneNumber(ph_number);
-                            user.setUsername("董小姐" + ph_number);
-                            user.setPassword("666666");
-                            user.signOrLogin(ph_vercode, new SaveListener<NewsUser>() {
-                                @Override
-                                public void done(NewsUser bmobUser, cn.bmob.v3.exception.BmobException e) {
-                                    if (e == null) {
-                                        Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, "注册失败", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-//                        }
-//                    });
+                    dialog.setCancelable(false);
+                    dialog.show();
+                    NewsUser user = new NewsUser();
+                    user.setMobilePhoneNumber(ph_number);
+                    user.setUsername("董小姐" + ph_number);
+                    user.setPassword("666666");
+                    user.signOrLogin(ph_vercode, new SaveListener<NewsUser>() {
+                        @Override
+                        public void done(NewsUser bmobUser, cn.bmob.v3.exception.BmobException e) {
+                            if (e == null) {
+                                dialog.dismiss();
+                                Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "注册失败", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
                 break;
             default:
@@ -229,7 +228,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private PlatformActionListener mPlatformActionListener = new PlatformActionListener() {
         @Override
         public void onStart(Platform platform, int type) {
-            LoadingDialog.showProgressDialog("正在登录", LoginActivity.this);
+            MyLoadingDialog.showProgressDialog("正在登录", LoginActivity.this);
             if (type == Platform.QQ) {
                 //showLoadingDialog(getString(R.string.register_login_loging));
             } else if (type == Platform.Sina) {
@@ -239,7 +238,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void onComplete(Platform platform, Object obj, int kind) {
-            LoadingDialog.hideProgressDialog(LoginActivity.this);
+            MyLoadingDialog.hideProgressDialog(LoginActivity.this);
             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
 //            if (kind == Platform.QQ) {
 //                if (obj != null) {

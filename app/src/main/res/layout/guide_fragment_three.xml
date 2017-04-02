@@ -30,8 +30,8 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="@string/enter_main"
-        android:textColor="@color/white"
-        android:background="@drawable/button_bg"
+        android:textColor="@color/black"
+        android:background="@drawable/button_line_bg"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"/>

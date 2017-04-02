@@ -33,6 +33,24 @@
         <!-- 模糊 -->
     </style>
 
+    <!--自定义LoadingDialog-->
+    <style name="Theme_loading_dialog">
+        <!--背景透明-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+
+    <!--自定义LoadingDialog的动画效果-->
+    <style name="pop_anim_style">
+        <item name="android:windowEnterAnimation">@anim/pop_in</item>
+        <item name="android:windowExitAnimation">@anim/pop_out</item>
+    </style>
+
+
     <!--更换头像-->
     <style name="MyDialog" parent="android:Theme.Dialog">
         <!-- 背景颜色及透明程度 -->
@@ -57,4 +75,5 @@
         <item name="android:windowContentOverlay">@null</item>
 
     </style>
+
 </resources>

@@ -10,13 +10,13 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import com.example.xuqi.qqdemo.R;
 
-public class LoadingDialog extends Dialog {
+public class MyLoadingDialog extends Dialog {
     private View mPanel;
     private TextView messageTextView;
     private Context context;
-    private static LoadingDialog mProgressDialog;
+    private static MyLoadingDialog mProgressDialog;
 
-    public LoadingDialog(Context context) {
+    public MyLoadingDialog(Context context) {
         super(context, R.style.dialog_loading_style);
         this.context = context;
         mPanel = getLayoutInflater().inflate(R.layout.dialog_loading, null);
@@ -93,8 +93,8 @@ public class LoadingDialog extends Dialog {
             return this;
         }
 
-        public LoadingDialog show() {
-            LoadingDialog dialog = new LoadingDialog(mContext);
+        public MyLoadingDialog show() {
+            MyLoadingDialog dialog = new MyLoadingDialog(mContext);
             dialog.setMessage(message);
             dialog.setCanceledOnTouchOutside(cancelaOnTouchOutside);
             dialog.setCancelable(cancelable);
@@ -138,9 +138,9 @@ public class LoadingDialog extends Dialog {
         mProgressDialog.show();
     }
 
-    public static LoadingDialog getLoadingDialog(Context mContext) {
+    public static MyLoadingDialog getLoadingDialog(Context mContext) {
         if (mProgressDialog == null) {
-            mProgressDialog = new LoadingDialog(mContext);
+            mProgressDialog = new MyLoadingDialog(mContext);
             mProgressDialog.setCancelable(true);
         }
         return mProgressDialog;

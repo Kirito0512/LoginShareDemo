@@ -37,7 +37,7 @@ public class SplashActivity extends AppCompatActivity {
                         GuidActivity.showActivity(SplashActivity.this);
                     } else {
                         // 不是第一次运行，进入MainActivity
-                        GuidActivity.showActivity(SplashActivity.this);
+                        MainActivity.showActivity(SplashActivity.this);
                     }
                     finish();
                     break;
