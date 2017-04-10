@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.adapter.MyViewPagerAdapter;
+import com.example.xuqi.qqdemo.bean.NewsUser;
 import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.example.xuqi.qqdemo.fragment.MainSlidingFragment;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
@@ -41,7 +43,7 @@ import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     private DrawerLayout mDrawerLayout;
     private CoordinatorLayout mCoodinatorLayout;
-    private TextView name;
+    private TextView name, mail;
     private CircleImageView icon;
     private ViewPager mViewPager;
     // ViewPager顶部Tab
@@ -86,6 +88,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         //CrashReport.testJavaCrash();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkIsLogin();
+    }
+
     private void initViewPagerData() {
         // Tab的标题采用string-array的方法保存，在res/values/arrays.xml中写
         mTitles = getResources().getStringArray(R.array.tab_titles);
@@ -126,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             @Override
             public void onClick(View v) {
                 // SnackBar可以允许用户对当前情况进行简单的处理
-                SnackbarUtil.show(v,"Data deleted",Snackbar.LENGTH_SHORT);
+                SnackbarUtil.show(v, "Data deleted", Snackbar.LENGTH_SHORT);
 //                Snackbar.make(v, "Data deleted", Snackbar.LENGTH_SHORT).setAction("撤销",
 //                        new View.OnClickListener() {
 //                            @Override
@@ -143,7 +151,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                mDrawerLayout.closeDrawers();
+                switch(item.getItemId()){
+                    case R.id.nav_set:
+                        PersonalSettingActivity.showActivity(MainActivity.this);
+                        mDrawerLayout.closeDrawers();
+                        break;
+                }
                 return true;
             }
         });
@@ -151,11 +164,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         // 导入NavigationView的头部布局文件
         View headerView = navView.getHeaderView(0);
         name = (TextView) headerView.findViewById(R.id.name);
+        mail = (TextView) headerView.findViewById(R.id.mail);
         icon = (CircleImageView) headerView.findViewById(R.id.icon_image);
         icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (UserSessionManager.isAleadyLogin()) {
+                if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
                     Intent intent = new Intent(MainActivity.this, PersonalPageActivity.class);
                     startActivity(intent);
                 } else {
@@ -199,14 +213,30 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private void processIntent() {
         checkIsLogin();
-        resetViews();
+//        resetViews();
     }
 
     private void checkIsLogin() {
+        // 第三方登录
         if (UserSessionManager.isAleadyLogin()) {
             NewsUserInfo user = UserSessionManager.getCurrentUser();
             name.setText(user.getName());
             Glide.with(this).load(UserSessionManager.getCurrentUser().getHeadPhoto()).into(icon);
+        }
+        // Bmob用户登录
+        else if (NewsUser.getCurrentUser() != null) {
+            NewsUser bmobUser = NewsUser.getCurrentUser(NewsUser.class);
+            if (!TextUtils.isEmpty(bmobUser.getUsername()))
+                name.setText(bmobUser.getUsername());
+            if (!TextUtils.isEmpty(bmobUser.getEmail()))
+                mail.setText(bmobUser.getEmail());
+            if (bmobUser.getImageUrl() != null) {
+                Glide.with(this).load(bmobUser.getImageUrl()).into(icon);
+            }
+        } else {
+            // 未登录
+            name.setText("董小姐");
+            icon.setImageResource(R.drawable.nav_icon);
         }
     }
 
@@ -216,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     public void resetViews() {
-        if (!UserSessionManager.isAleadyLogin()) {
+        if (!UserSessionManager.isAleadyLogin() && NewsUser.getCurrentUser(NewsUser.class) == null) {
             name.setText("董小姐");
             icon.setImageResource(R.drawable.nav_icon);
         }

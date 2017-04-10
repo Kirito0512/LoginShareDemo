@@ -40,11 +40,10 @@ dependencies {
     //以下SDK开发者请根据需要自行选择
     //bmob-sdk：Bmob的android sdk包，包含了Bmob的数据存储、文件等服务，以下是最新的bmob-sdk:
     //3.5.0：请务必查看下面注释[1]
-    compile 'cn.bmob.android:bmob-sdk:3.5.0'
+    compile 'cn.bmob.android:bmob-sdk:3.5.3'
     //bmob-sms ：Bmob单独为短信服务提供的包
     compile 'cn.bmob.android:bmob-sms:1.0.1'
     // bmob兼容Android 6.0 系统所需
-
 
     compile 'com.android.support:design:24.2.1'
     compile 'de.hdodenhof:circleimageview:2.1.0'

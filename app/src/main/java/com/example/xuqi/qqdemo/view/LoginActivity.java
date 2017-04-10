@@ -30,9 +30,15 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
+import java.util.List;
+
 import cn.bmob.sms.BmobSMS;
 import cn.bmob.sms.exception.BmobException;
 import cn.bmob.sms.listener.RequestSMSCodeListener;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.SaveListener;
 
 import static com.example.xuqi.qqdemo.Constants.WX_APPId;
@@ -116,7 +122,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             if (e == null) {
                                 // 发送成功时，让获取验证码按钮不可点击，且为灰色
                                 tv_send.setClickable(false);
-                                tv_send.setBackgroundColor(Color.GRAY);
+//                                tv_send.setBackgroundColor(Color.GRAY);
+                                tv_send.setTextColor(Color.GRAY);
                                 Toast.makeText(LoginActivity.this, "验证码发送成功，请尽快使用", Toast.LENGTH_SHORT).show();
                                 /**
                                  * 倒计时一分钟的操作
@@ -149,18 +156,56 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // Bmob手机号码一键注册或登录
                     dialog.setCancelable(false);
                     dialog.show();
-                    NewsUser user = new NewsUser();
-                    user.setMobilePhoneNumber(ph_number);
-                    user.setUsername("董小姐" + ph_number);
-                    user.setPassword("666666");
-                    user.signOrLogin(ph_vercode, new SaveListener<NewsUser>() {
+                    BmobQuery<NewsUser> query = new BmobQuery<>();
+                    query.addWhereEqualTo("mobilePhoneNumber", ph_number);
+                    query.findObjects(new FindListener<NewsUser>() {
                         @Override
-                        public void done(NewsUser bmobUser, cn.bmob.v3.exception.BmobException e) {
+                        public void done(List<NewsUser> list, cn.bmob.v3.exception.BmobException e) {
                             if (e == null) {
-                                dialog.dismiss();
-                                Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                                // 该手机号未注册
+                                if (list.size() == 0) {
+                                    NewsUser user = new NewsUser();
+                                    user.setMobilePhoneNumber(ph_number);
+                                    user.setUsername("董小姐" + ph_number);
+                                    user.setPassword("666666");
+                                    // true表示性别男
+                                    user.setSex(true);
+                                    user.setEmail("kirito0512@qq.com");
+                                    // Bmob一键注册&登录
+                                    user.signOrLogin(ph_vercode, new SaveListener<NewsUser>() {
+                                        @Override
+                                        public void done(NewsUser newsUser, cn.bmob.v3.exception.BmobException e) {
+                                            if (e == null) {
+                                                dialog.dismiss();
+                                                Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                                                MainActivity.showActivity(LoginActivity.this);
+                                            } else {
+                                                dialog.dismiss();
+                                                Toast.makeText(LoginActivity.this, "注册失败", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                }
+                                // 该手机号已注册
+                                else {
+                                    // Bmob短信登录
+                                    BmobUser.loginBySMSCode(ph_number, ph_vercode, new LogInListener<NewsUser>() {
+                                        @Override
+                                        public void done(NewsUser newsUser, cn.bmob.v3.exception.BmobException e) {
+                                            if (e == null) {
+                                                dialog.dismiss();
+                                                Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                                                MainActivity.showActivity(LoginActivity.this);
+                                            } else {
+                                                dialog.dismiss();
+                                                Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                }
                             } else {
-                                Toast.makeText(LoginActivity.this, "注册失败", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                                Toast.makeText(LoginActivity.this, "查询失败", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

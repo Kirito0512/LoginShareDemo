@@ -17,7 +17,7 @@ public class L {
     //五个等级 DIWE
     public static void d(String text) {
         if (DEBUG) {
-            Log.d(TAG, text);
+            Log.d(TAG, "xuqi"+text);
         }
     }
 

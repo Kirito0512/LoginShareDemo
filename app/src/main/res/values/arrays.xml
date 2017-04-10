@@ -14,4 +14,8 @@
     <item>收藏</item>
     <item>删除</item>
   </string-array>
+  <string-array name="sex_array">
+    <item>男</item>
+    <item>女</item>
+  </string-array>
 </resources>

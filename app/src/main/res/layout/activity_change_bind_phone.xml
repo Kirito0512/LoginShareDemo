@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/center_view"
+    android:layout_marginLeft="40dp"
+    android:layout_marginRight="40dp">
+
+    <LinearLayout
+        android:layout_marginTop="120dp"
+        android:id="@+id/ll_change_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_line_bg"
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/change_bind_phone_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:drawableLeft="@drawable/ic_phone_iphone_black_24dp"
+            android:drawablePadding="5dp"
+            android:gravity="left"
+            android:hint="@string/register_login_et_hint"
+            android:inputType="phone"
+            android:paddingTop="5dp"
+            android:paddingLeft="15dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray_1"
+            android:textSize="@dimen/base_textsize_large_16sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="50dp"
+            android:background="@color/black" />
+
+        <TextView
+            android:id="@+id/request_change_vercode"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:layout_marginRight="5dp"
+            android:text="@string/send_vercode"
+            android:textColor="@color/black"
+            android:textSize="@dimen/base_textsize_smaller_12sp" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/change_bind_vercode_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_change_phone"
+        android:background="@drawable/button_line_bg"
+        android:drawableLeft="@drawable/ic_lock_outline_black_24dp"
+        android:drawablePadding="5dp"
+        android:gravity="left"
+        android:hint="@string/edit_vercode"
+        android:paddingBottom="5dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/gray_1"
+        android:inputType="number"
+        android:textSize="@dimen/base_textsize_large_16sp" />
+
+    <Button
+        android:id="@+id/change_bind_phone_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/change_bind_vercode_et"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/corner_red_bg"
+        android:padding="10dp"
+        android:text="@string/register_login_btn"
+        android:textColor="@color/white"
+        android:textSize="@dimen/base_textsize_title_18sp" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/tv_register"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/account_password_login"-->
+        <!--android:layout_below="@+id/register_login_vercode_et"-->
+        <!--android:layout_marginTop="5dp"/>-->
+</RelativeLayout>
+

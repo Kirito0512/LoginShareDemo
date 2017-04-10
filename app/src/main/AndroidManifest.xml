@@ -77,15 +77,18 @@
         </activity>
         <activity android:name=".view.LoginActivity" />
         <activity android:name=".view.PersonalPageActivity" />
-        <!--主页-->
-        <activity android:name=".view.MainActivity"
+        <!-- 主页 -->
+        <activity
+            android:name=".view.MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-        </activity>
-        <!--引导页-->
+            android:screenOrientation="portrait" />
+        <!-- 引导页 -->
         <activity
             android:name=".view.GuidActivity"
-            android:theme="@style/splashFullScreen"/>
+            android:theme="@style/splashFullScreen" />
+        <activity android:name=".view.EditPersonalInfoPageActivity" />
+        <activity android:name=".view.PersonalSettingActivity" />
+        <activity android:name=".view.ChangeBindPhoneActivity"></activity>
     </application>
 
 </manifest>
