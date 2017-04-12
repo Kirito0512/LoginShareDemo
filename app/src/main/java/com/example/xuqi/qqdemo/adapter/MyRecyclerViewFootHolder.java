@@ -8,6 +8,7 @@ import com.example.xuqi.qqdemo.R;
 
 /**
  * Created by xuqi on 17/3/18.
+ * 上拉刷新
  */
 
 public class MyRecyclerViewFootHolder extends RecyclerView.ViewHolder {

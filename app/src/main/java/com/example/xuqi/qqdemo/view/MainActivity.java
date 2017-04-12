@@ -88,11 +88,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         //CrashReport.testJavaCrash();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        checkIsLogin();
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        checkIsLogin();
+//    }
 
     private void initViewPagerData() {
         // Tab的标题采用string-array的方法保存，在res/values/arrays.xml中写
@@ -147,7 +147,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         // 导航栏
         final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-        navView.setCheckedItem(R.id.nav_call);
+        // 将navigationview默认选中这一项
+        navView.setCheckedItem(R.id.nav_fav);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -198,6 +199,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         processIntent();
     }
 
+    @Override
+    protected void onRestart() {
+        checkIsLogin();
+        super.onRestart();
+    }
+
     // ActionBar点击
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -243,13 +250,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     public static void showActivity(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
         context.startActivity(intent);
-    }
-
-    public void resetViews() {
-        if (!UserSessionManager.isAleadyLogin() && NewsUser.getCurrentUser(NewsUser.class) == null) {
-            name.setText("董小姐");
-            icon.setImageResource(R.drawable.nav_icon);
-        }
     }
 
     // viewpager滑动监听的三个方法

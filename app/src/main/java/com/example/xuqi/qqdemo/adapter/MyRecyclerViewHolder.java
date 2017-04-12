@@ -28,6 +28,7 @@ import com.example.xuqi.qqdemo.R;
 
 /**
  * Created by Monkey on 2015/6/29.
+ * RecyclerView Demo里的item项
  */
 public class MyRecyclerViewHolder extends RecyclerView.ViewHolder {
 

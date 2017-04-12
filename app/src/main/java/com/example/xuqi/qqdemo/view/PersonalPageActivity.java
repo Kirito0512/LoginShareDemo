@@ -64,9 +64,16 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    protected void onStart() {
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
         initDatas();
-        super.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        initDatas();
+        super.onRestart();
     }
 
     private void initDatas() {
@@ -77,8 +84,8 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
             Glide.with(this).load(UserSessionManager.getCurrentUser().getHeadPhoto()).into(icon);
         }
         // Bmob用户登录
-        else if (NewsUser.getCurrentUser(NewsUser.class) != null) {
-            user = NewsUser.getCurrentUser(NewsUser.class);
+        else if (NewsUser.getCurrentUser() != null) {
+            NewsUser user = NewsUser.getCurrentUser(NewsUser.class);
             // 设置昵称
             if (!TextUtils.isEmpty(user.getUsername()))
                 name.setText(user.getUsername());

@@ -19,5 +19,7 @@ public class Constants {
     public static final String SHARE_IS_FIRST = "isFirst";
     // tencent bugly
     public static final String BUGLY_APP_ID = "136884752e";
+    // 新闻头条API APPKEY
+    public static final String NEWS_APP_KEY = "ce227c87f864b138269dcde6ca50a237";
 
 }

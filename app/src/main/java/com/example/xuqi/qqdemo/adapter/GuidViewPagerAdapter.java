@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Created by xuqi on 17/3/23.
+ * 引导页ViewPager的适配器
  */
 
 public class GuidViewPagerAdapter extends PagerAdapter{

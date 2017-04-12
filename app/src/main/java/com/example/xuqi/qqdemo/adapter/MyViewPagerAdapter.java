@@ -27,6 +27,7 @@ import java.util.List;
 
 /**
  * Created by Monkey on 2015/6/29.
+ * 主页ViewPager的适配器
  */
 public class MyViewPagerAdapter extends FragmentStatePagerAdapter {
 

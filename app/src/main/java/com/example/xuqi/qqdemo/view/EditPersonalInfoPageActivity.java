@@ -72,8 +72,6 @@ public class EditPersonalInfoPageActivity extends AppCompatActivity implements V
                 String sex = et_sex.getText().toString().trim();
                 // 更新用户信息
                 updateInfo(username, mail, sex);
-                // 关闭Activity
-                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -107,6 +105,8 @@ public class EditPersonalInfoPageActivity extends AppCompatActivity implements V
                     Toast.makeText(EditPersonalInfoPageActivity.this, R.string.Bmob_update, Toast.LENGTH_SHORT).show();
                     // 关闭dialog
                     dialog.dismiss();
+                    // 关闭Activity
+                    finish();
                 } else {
                     L.d(e.toString());
                     Toast.makeText(EditPersonalInfoPageActivity.this, R.string.Bmob_error, Toast.LENGTH_SHORT).show();
