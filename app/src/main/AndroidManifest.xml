@@ -87,9 +87,11 @@
             android:name=".view.GuidActivity"
             android:theme="@style/splashFullScreen" />
         <activity android:name=".view.EditPersonalInfoPageActivity" />
-        <activity android:name=".view.PersonalSettingActivity"
-            android:launchMode="singleTop"/>
-        <activity android:name=".view.ChangeBindPhoneActivity"></activity>
+        <activity
+            android:name=".view.PersonalSettingActivity"
+            android:launchMode="singleTop" />
+        <activity android:name=".view.ChangeBindPhoneActivity" />
+        <activity android:name=".view.Main2Activity"></activity>
     </application>
 
 </manifest>

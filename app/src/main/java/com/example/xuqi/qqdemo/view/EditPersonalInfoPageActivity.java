@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -42,7 +41,8 @@ public class EditPersonalInfoPageActivity extends AppCompatActivity implements V
         et_email = (EditText) findViewById(R.id.et_email);
         et_sex = (TextView) findViewById(R.id.et_sex);
         et_sex.setOnClickListener(this);
-        setSupportActionBar(toolbar);
+        // 为toolbar加载menu样式
+        toolbar.inflateMenu(R.menu.edit_personal_menu);
         // ToolBar返回键
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,31 +50,25 @@ public class EditPersonalInfoPageActivity extends AppCompatActivity implements V
                 finish();
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // 初始化Toolbar
-        getMenuInflater().inflate(R.menu.edit_personal_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.check:
-                // TODO: 17/4/7 check personal info
-                /**
-                 *  获取用户填写的信息
-                 */
-                String username = et_usernamae.getText().toString().trim();
-                String mail = et_email.getText().toString().trim();
-                String sex = et_sex.getText().toString().trim();
-                // 更新用户信息
-                updateInfo(username, mail, sex);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+        // 设置toolbar menu里的点击事件
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.check:
+                        /**
+                         *  获取用户填写的信息
+                         */
+                        String username = et_usernamae.getText().toString().trim();
+                        String mail = et_email.getText().toString().trim();
+                        String sex = et_sex.getText().toString().trim();
+                        // 更新用户信息
+                        updateInfo(username, mail, sex);
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     private void updateInfo(String username, String mail, String sex) {

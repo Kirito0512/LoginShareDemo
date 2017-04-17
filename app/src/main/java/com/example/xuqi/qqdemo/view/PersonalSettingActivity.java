@@ -28,7 +28,6 @@ public class PersonalSettingActivity extends AppCompatActivity implements View.O
         relativeLayout = (RelativeLayout) findViewById(R.id.rl_set);
 
         // 设置返回键点击事件
-        setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,8 +47,8 @@ public class PersonalSettingActivity extends AppCompatActivity implements View.O
         }
     }
 
-    public static void showActivity(Context mContext){
-        Intent intent = new Intent(mContext,PersonalSettingActivity.class);
+    public static void showActivity(Context mContext) {
+        Intent intent = new Intent(mContext, PersonalSettingActivity.class);
         mContext.startActivity(intent);
     }
 }

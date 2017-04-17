@@ -62,4 +62,6 @@
     <string name="communication">联系方式</string>
     <string name="phone_number">手机号码</string>
     <string name="news_title">新闻标题</string>
+    <string name="news_author">作者</string>
+    <string name="news_time">发布时间</string>
 </resources>

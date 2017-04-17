@@ -280,4 +280,5 @@
     <color name="main_blue_light">#3F56B5</color>
     <color name="main_blue_dark">#30459E</color>
     <color name="base_color">#009ad6</color>
+    <color name="fav_pink">#fe7780</color>
 </resources>

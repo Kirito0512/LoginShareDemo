@@ -4,24 +4,41 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.adapter.MyRecyclerViewAdapter;
+import com.example.xuqi.qqdemo.application.BaseApplication;
+import com.example.xuqi.qqdemo.bean.NewsInfo;
+import com.example.xuqi.qqdemo.netdata.GsonData;
+import com.example.xuqi.qqdemo.util.L;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
+import static com.example.xuqi.qqdemo.Constants.NEWS_API_ADDRESS;
+import static com.example.xuqi.qqdemo.Constants.NEWS_API_SOCIAL;
+import static com.example.xuqi.qqdemo.Constants.NEWS_APP_KEY;
 
 
 /**
@@ -42,12 +59,15 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
     private LinearLayoutManager mLayoutManager;
     private MyRecyclerViewAdapter mRecyclerViewAdapter;
     private int lastVisibleItem;
+    private Handler handler = new MyHandler(this);
+    public static int REQUEST_LIST = 1;
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.frag_main, container, false);
         return mView;
     }
-    
+
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.id_swiperefreshlayout);
@@ -95,20 +115,20 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
                 // SCROLL_STATE_SETTLING = 2 表示自动滚动
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                     super.onScrollStateChanged(recyclerView, newState);
-                    Log.d(TAG, "onScrollStateChanged: lastVisibleItem = "+lastVisibleItem);
-                    if(newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == mRecyclerViewAdapter.getItemCount()) {
+                    Log.d(TAG, "onScrollStateChanged: lastVisibleItem = " + lastVisibleItem);
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == mRecyclerViewAdapter.getItemCount()) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "run: 上拉刷新");
                                 List<String> newDatas = new ArrayList<String>();
-                                for(int i=0; i < 5;i++){
-                                    int index = i+1;
+                                for (int i = 0; i < 5; i++) {
+                                    int index = i + 1;
                                     newDatas.add("more time" + index);
                                 }
                                 mRecyclerViewAdapter.addMoreItem(newDatas);
                             }
-                        },1000);
+                        }, 1000);
                     }
                 }
 
@@ -122,9 +142,9 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
 //                dy > 0时为手指向上滚动, 列表滚动显示下面的内容
 //                dy < 0时为手指向下滚动, 列表滚动显示上面的内容
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView,dx,dy);
+                    super.onScrolled(recyclerView, dx, dy);
                     lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
-                    Log.d(TAG, "onScrolled: lastVisibleItem = "+lastVisibleItem);
+                    Log.d(TAG, "onScrolled: lastVisibleItem = " + lastVisibleItem);
                 }
             });
         }
@@ -135,17 +155,14 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
 
         // 刷新时模拟数据的变化
         new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 mSwipeRefreshLayout.setRefreshing(false);
-                int temp = (int) (Math.random() * 10);
-//                if (flag != STAGGERED_GRID) {
-                mRecyclerViewAdapter.mDatas.add(0, "new" + temp);
-                mRecyclerViewAdapter.notifyDataSetChanged();
-//                } else {
-//                    mStaggeredAdapter.mDatas.add(0, "new" + temp);
-//                    mStaggeredAdapter.mHeights.add(0, (int) (Math.random() * 300) + 200);
-//                    mStaggeredAdapter.notifyDataSetChanged();
-//                }
+                MyThread thread = new MyThread();
+                thread.run();
+//                int temp = (int) (Math.random() * 10);
+//                mRecyclerViewAdapter.mDatas.add(0, "new" + temp);
+//                mRecyclerViewAdapter.notifyDataSetChanged();
             }
         }, 1000);
     }
@@ -162,19 +179,78 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
         //SnackbarUtil.show(mRecyclerView, getString(R.string.item_longclicked), 0);
     }
 
-    public void showAlertDialog (final int position) {
+    public void showAlertDialog(final int position) {
         new AlertDialog.Builder(getActivity()).setTitle("列表框")
                 .setItems(getResources().getStringArray(R.array.choose_log_click), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
-                            SnackbarUtil.show(getView(),"收藏",0);
+                            SnackbarUtil.show(getView(), "收藏", 0);
                         } else if (which == 1) {
                             mRecyclerViewAdapter.deleteItem(position);
                         }
                         dialog.dismiss();
                     }
                 }).show();
-                //.setNegativeButton("确定", null).show();
+        //.setNegativeButton("确定", null).show();
+    }
+
+    public class MyThread implements Runnable {
+        @Override
+        public void run() {
+            BaseApplication baseApplication = (BaseApplication) getActivity().getApplication();
+            // 创建Volley的JsonObjectRequest
+            JsonObjectRequest request = (JsonObjectRequest) getNewsListJson(NEWS_API_SOCIAL);
+            // 添加到
+            baseApplication.addToRequestQueue(request, TAG);
+        }
+    }
+
+    // Volley获取json
+    public Request getNewsListJson(final String newsType) {
+        JsonObjectRequest jsonObjectRequest = null;
+        if (!TextUtils.isEmpty(newsType)) {
+            L.d(NEWS_API_ADDRESS + newsType + NEWS_APP_KEY);
+            jsonObjectRequest = new JsonObjectRequest(NEWS_API_ADDRESS + newsType + NEWS_APP_KEY, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("xuqi", response.toString());
+                            try {
+                                List<NewsInfo> newsList = GsonData.parseJSONToList(response.toString());
+                                Message msg = new Message();
+                                msg.what = REQUEST_LIST;
+                                msg.obj = newsList;
+                                handler.sendMessage(msg);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("xuqi", error.getMessage(), error);
+                }
+            });
+        }
+        return jsonObjectRequest;
+    }
+
+    public class MyHandler extends Handler {
+        private WeakReference<MainSlidingFragment> reference;
+
+        public MyHandler(MainSlidingFragment fragment) {
+            reference = new WeakReference<MainSlidingFragment>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    List<NewsInfo> newsList = (List<NewsInfo>) msg.obj;
+                    mRecyclerViewAdapter.deleteAndAddItem(newsList);
+                    break;
+            }
+        }
     }
 }

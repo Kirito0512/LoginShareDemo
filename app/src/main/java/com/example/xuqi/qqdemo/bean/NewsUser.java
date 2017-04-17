@@ -17,7 +17,7 @@ public class NewsUser extends BmobUser {
 
     private Boolean sex;
 
-    public Boolean isSex() {
+    public Boolean getSex() {
         return sex;
     }
 

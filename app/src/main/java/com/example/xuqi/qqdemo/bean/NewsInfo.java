@@ -4,6 +4,7 @@ import cn.bmob.v3.BmobObject;
 
 /**
  * Created by xuqi on 17/4/10.
+ * 聚合新闻头条API对应的Bean
  */
 
 public class NewsInfo extends BmobObject {
@@ -12,6 +13,10 @@ public class NewsInfo extends BmobObject {
     private String date;
     private String author_name;
     private String url;
+    // 三张图片，可能存在只有一张图，或只有两张图的情况
+    private String thumbnail_pic_s;
+    private String thumbnail_pic_s02;
+    private String thumbnail_pic_s03;
 
     public String getUniquekey() {
         return uniquekey;
@@ -51,6 +56,29 @@ public class NewsInfo extends BmobObject {
 
     public void setUniquekey(String uniquekey) {
         this.uniquekey = uniquekey;
+    }
 
+    public String getThumbnail_pic_s() {
+        return thumbnail_pic_s;
+    }
+
+    public void setThumbnail_pic_s(String thumbnail_pic_s) {
+        this.thumbnail_pic_s = thumbnail_pic_s;
+    }
+
+    public String getThumbnail_pic_s02() {
+        return thumbnail_pic_s02;
+    }
+
+    public void setThumbnail_pic_s02(String thumbnail_pic_s02) {
+        this.thumbnail_pic_s02 = thumbnail_pic_s02;
+    }
+
+    public String getThumbnail_pic_s03() {
+        return thumbnail_pic_s03;
+    }
+
+    public void setThumbnail_pic_s03(String thumbnail_pic_s03) {
+        this.thumbnail_pic_s03 = thumbnail_pic_s03;
     }
 }

@@ -3,10 +3,7 @@ package com.example.xuqi.qqdemo.view;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.example.xuqi.qqdemo.R;
@@ -21,23 +18,29 @@ public class LoadingDialog extends Dialog {
     private TextView tv_msg;
 
     public LoadingDialog(Context mContext) {
-        this(mContext, 100, 100, R.layout.dialog_loding, R.style.Theme_loading_dialog, Gravity.CENTER, R.style.pop_anim_style);
+//        this(mContext, 100, 100, R.layout.dialog_loding, R.style.Theme_loading_dialog, Gravity.CENTER, R.style.pop_anim_style);
+        super(mContext, R.style.Theme_loading_dialog);
+        //设置属性
+        setContentView(R.layout.dialog_loding);
+        view = getLayoutInflater().inflate(R.layout.dialog_loding, null);
+//        Window window = getWindow();
+//        WindowManager.LayoutParams layoutParams = window.getAttributes();
+//        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+//        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+//        layoutParams.gravity = gravity;
+//        window.setAttributes(layoutParams);
+//        window.setWindowAnimations(anim);
+
+        tv_msg = (TextView) view.findViewById(R.id.tv_loading_msg);
     }
 
-    public LoadingDialog(Context context, int width, int height, int layout, int style, int gravity, int anim) {
-        super(context, style);
+    public LoadingDialog(Context mContext, String title) {
+        super(mContext, R.style.Theme_loading_dialog);
         //设置属性
-        setContentView(layout);
-        Window window = getWindow();
-        WindowManager.LayoutParams layoutParams = window.getAttributes();
-        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-        layoutParams.gravity = gravity;
-        window.setAttributes(layoutParams);
-        window.setWindowAnimations(anim);
-
+        setContentView(R.layout.dialog_loding);
         view = getLayoutInflater().inflate(R.layout.dialog_loding, null);
-        tv_msg = (TextView) findViewById(R.id.tv_loading_msg);
+        tv_msg = (TextView) view.findViewById(R.id.tv_loading_msg);
+        tv_msg.setText(title);
     }
 
     // 设置Dialog的message

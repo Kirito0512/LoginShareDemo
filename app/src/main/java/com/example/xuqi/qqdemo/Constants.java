@@ -20,6 +20,25 @@ public class Constants {
     // tencent bugly
     public static final String BUGLY_APP_ID = "136884752e";
     // 新闻头条API APPKEY
-    public static final String NEWS_APP_KEY = "ce227c87f864b138269dcde6ca50a237";
-
+    public static final String NEWS_APP_KEY = "&key=ce227c87f864b138269dcde6ca50a237";
+    // 新闻头条API 接口地址
+    public static final String NEWS_API_ADDRESS = "http://v.juhe.cn/toutiao/index";
+    // 新闻头条API type 头条
+    public static final String NEWS_API_TOP = "?type=top";
+    // 新闻头条API type 社会
+    public static final String NEWS_API_SOCIAL = "?type=shehui";
+    // 新闻头条API type 国内
+    public static final String NEWS_API_COUNTRY = "?type=guonei";
+    // 新闻头条API type 娱乐
+    public static final String NEWS_API_INTER = "?type=yule";
+    // 新闻头条API type 体育
+    public static final String NEWS_API_ENTERTAINMENT = "?type=tiyu";
+    // 新闻头条API type 军事
+    public static final String NEWS_API_MILITARY = "?type=junshi";
+    // 新闻头条API type 科技
+    public static final String NEWS_API_TEC = "?type=keji";
+    // 新闻头条API type 财经
+    public static final String NEWS_API_FINANANCE = "?type=caijing";
+    // 新闻头条API type 时尚
+    public static final String NEWS_API_FASHION = "?type=shishang";
 }

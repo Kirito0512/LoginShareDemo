@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,7 +14,6 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +26,6 @@ import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.bean.NewsUser;
 import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.example.xuqi.qqdemo.util.L;
-import com.example.xuqi.qqdemo.util.TencentPlatform;
 import com.example.xuqi.qqdemo.util.UserSessionManager;
 
 import java.io.File;
@@ -54,6 +53,7 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
     public static final int GALLERY_REQUEST_CODE = 101;
     public static final int CROP_REQUEST_CODE = 102;
     public String imgPath = "";
+    LoadingDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +98,17 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
             // 设置用户头像
             if (user.getImageUrl() != null)
                 Glide.with(this).load(user.getImageUrl()).into(icon);
+            if (user.getSex() != null) {
+                if (user.getSex() == true) {
+                    Drawable sex = getResources().getDrawable(R.drawable.male);
+                    sex.setBounds(0, 0, 36, 36);
+                    name.setCompoundDrawables(null, null, sex, null);
+                } else {
+                    Drawable sex = getResources().getDrawable(R.drawable.female);
+                    sex.setBounds(0, 0, 36, 36);
+                    name.setCompoundDrawables(null, null, sex, null);
+                }
+            }
         }
     }
 
@@ -111,9 +122,8 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
 
         logout.setOnClickListener(this);
         icon.setOnClickListener(this);
-
-        //setSupportActionBar方法必须放在setNavigationOnClickListener之前，点击事件才能有用
-        setSupportActionBar(toolBar);
+        // 加载menu样式
+        toolBar.inflateMenu(R.menu.personal_menu);
         // 设置Toolbar返回键
         toolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,24 +131,18 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
                 finish();
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // 初始化Toolbar
-        getMenuInflater().inflate(R.menu.personal_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.edit:
-                // TODO: 17/4/7 edit personal info
-                EditPersonalInfoPageActivity.showActivity(this);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+        // 设置toolbar扩展栏的点击事件
+        toolBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.edit:
+                        EditPersonalInfoPageActivity.showActivity(PersonalPageActivity.this);
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -167,6 +171,7 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+    // 拍照｜｜图库 dialog
     private void showTypeDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog alertDialog = builder.create();
@@ -228,22 +233,15 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
                         /**
                          * 上传服务器代码
                          */
-
-                        // 获取图片路径
-//                        String img_path = getRealImagePath();
-//                        L.d("xuqi path = " + img_path);
-//                        L.d("xuqi Environment = " + Environment.getExternalStorageDirectory() + "/head.jpg");
                         File file = saveImageToGallery(getApplicationContext(), head);// 保存在SD卡中
                         // 上传图片到Bmob
-                        LoadingDialog dialog = new LoadingDialog(this);
+                        dialog = new LoadingDialog(this);
                         dialog.show();
                         uploadImage(imgPath);
-                        dialog.dismiss();
 //                        Glide.with(PersonalPageActivity.this).load(file).transform(new GlideRoundTransform(getApplicationContext(), 10)).
 //                                placeholder(R.drawable.ic_cloud_download_black_24dp).
 //                                error(R.drawable.ic_delete_forever_black_24dp).into(icon);//Glide解析获取用户头像
-                        Glide.with(this).load(file).into(icon);
-                        (new TencentPlatform(this)).doSetAvatar(this, file.toString());
+                        //(new TencentPlatform(this)).doSetAvatar(this, file.toString());
                     }
                 }
                 break;
@@ -275,9 +273,13 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
                         public void done(BmobException e) {
                             if (e == null) {
                                 Toast.makeText(PersonalPageActivity.this, "更新数据成功", Toast.LENGTH_SHORT).show();
+                                // 更新个人页面的头像
+                                String image = NewsUser.getCurrentUser(NewsUser.class).getImageUrl();
+                                Glide.with(PersonalPageActivity.this).load(image).into(icon);
                             } else {
                                 Toast.makeText(PersonalPageActivity.this, "更新数据失败", Toast.LENGTH_SHORT).show();
                             }
+                            dialog.dismiss();
                         }
                     });
 

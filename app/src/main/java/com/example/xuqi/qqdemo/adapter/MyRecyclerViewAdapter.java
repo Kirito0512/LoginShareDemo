@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.xuqi.qqdemo.R;
+import com.example.xuqi.qqdemo.bean.NewsInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,12 +62,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public Context mContext;
     public List<String> mDatas;
+    public List<NewsInfo> newsList;
     public LayoutInflater mLayoutInflater;
 
     public MyRecyclerViewAdapter(Context mContext) {
         this.mContext = mContext;
         mLayoutInflater = LayoutInflater.from(mContext);
         mDatas = new ArrayList<>();
+        newsList = new ArrayList<>();
         // 共58项
         for (int i = 'A'; i <= 'z'; i++) {
             mDatas.add((char) i + "");
@@ -155,6 +158,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public void addMoreItem(List<String> newDatas) {
         mDatas.addAll(newDatas);
+        notifyDataSetChanged();
+    }
+
+    // 添加NewsInfo的list进去
+    public void deleteAndAddItem(List<NewsInfo> newsDatas){
+        newsList.clear();
+        newsList.addAll(newsDatas);
         notifyDataSetChanged();
     }
 

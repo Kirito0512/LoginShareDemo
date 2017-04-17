@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -55,8 +54,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     // ViewPager的数据适配器
     private MyViewPagerAdapter mViewPagerAdapter;
 
-    private static final String TAG = "MainActivity";
     private boolean mIsExit = false;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,33 +65,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         initViewPagerData();
 
         initViews();
-//
-//        NewsUserInfo user = new NewsUserInfo();
-//        user.setName("xuqi");
-//        user.setHeadPhoto("http://image.baidu.com/search/detail?ct=503316480&z=0&ipn=false&word=头像&hs=0&pn=0&spn=0&di=122313459840&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&ie=utf-8&oe=utf-8&cl=2&lm=-1&cs=1140958647%2C2055517506&os=3955454218%2C713474665&simid=4190247156%2C606480520&adpicid=0&lpn=0&ln=30&fr=ala&fm=&sme=&cg=head&bdtype=0&oriquery=头像&objurl=http%3A%2F%2Fup.qqya.com%2Fallimg%2F201710-t%2F17-101803_106599.jpg&fromurl=ippr_z2C%24qAzdH3FAzdH3Fooo_z%26e3Bqqyw_z%26e3Bv54AzdH3FpAzdH3Flc9a_d_z%26e3Bip4s&gsm=0");
-//        // 保存用户信息到本地
-//        UserSessionManager.storeUserToDisk(user);
-//        user.save(this, new SaveListener() {
-//            @Override
-//            public void onSuccess() {
-//                Log.d(TAG, "onSuccess: ");
-//            }
-//
-//            @Override
-//            public void onFailure(int i, String s) {
-//                Log.d(TAG, "onFailure: ");
-//            }
-//        });
         checkIsLogin();
-        // Tencent Bugly手动crash
-        //CrashReport.testJavaCrash();
     }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        checkIsLogin();
-//    }
 
     private void initViewPagerData() {
         // Tab的标题采用string-array的方法保存，在res/values/arrays.xml中写
@@ -111,48 +85,51 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     private void initViews() {
-        // 初始化Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         mCoodinatorLayout = (CoordinatorLayout) findViewById(R.id.id_coordinatorlayout);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mTabLayout = (TabLayout) findViewById(R.id.id_tablayout);
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
-        // ActionBar
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // 显示导航按钮(HomeAsUp按钮)
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            // 设置一个导航按钮图标
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        }
+        // 为ToolBar设置导航按键
+        // 初始化Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+//        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.home:
+//                        mDrawerLayout.openDrawer(GravityCompat.START);
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
 
-        // 悬浮按钮
+        // 悬浮按钮初始化&点击事件
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // SnackBar可以允许用户对当前情况进行简单的处理
                 SnackbarUtil.show(v, "Data deleted", Snackbar.LENGTH_SHORT);
-//                Snackbar.make(v, "Data deleted", Snackbar.LENGTH_SHORT).setAction("撤销",
-//                        new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                Toast.makeText(MainActivity.this, "Data restored", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }).show();
             }
         });
 
-        // 导航栏
+        // 导航页NavigationView初始化&点击事件
         final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         // 将navigationview默认选中这一项
         navView.setCheckedItem(R.id.nav_fav);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch(item.getItemId()){
+                switch (item.getItemId()) {
+                    // 设置按钮
                     case R.id.nav_set:
                         PersonalSettingActivity.showActivity(MainActivity.this);
                         mDrawerLayout.closeDrawers();
@@ -167,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         name = (TextView) headerView.findViewById(R.id.name);
         mail = (TextView) headerView.findViewById(R.id.mail);
         icon = (CircleImageView) headerView.findViewById(R.id.icon_image);
+        // 导航页用户头像点击
         icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,22 +183,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onRestart();
     }
 
-    // ActionBar点击
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // HomeAsUp的默认ID
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                break;
-            default:
-        }
-        return true;
-    }
-
     private void processIntent() {
         checkIsLogin();
-//        resetViews();
     }
 
     private void checkIsLogin() {
@@ -287,4 +251,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
 }
