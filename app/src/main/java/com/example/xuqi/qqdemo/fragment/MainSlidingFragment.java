@@ -60,8 +60,6 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
     private MyRecyclerViewAdapter mRecyclerViewAdapter;
     private int lastVisibleItem;
     private Handler handler = new MyHandler(this);
-    public static int REQUEST_LIST = 1;
-
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.frag_main, container, false);
@@ -80,6 +78,7 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
         mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
 
         mRecyclerViewAdapter = new MyRecyclerViewAdapter(getActivity());
+        // RecyclerView的item的点击事件监听
         mRecyclerViewAdapter.setOnItemClickListener(this);
         // 绑定Adapter
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
@@ -134,13 +133,12 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
 
                 @Override
                 // 滚动时回调
-
-//                dx : 水平滚动距离
-//                dy : 垂直滚动距离
-//                dx > 0时为手指向左滚动, 列表滚动显示右面的内容
-//                dx < 0时为手指向右滚动, 列表滚动显示左面的内容
-//                dy > 0时为手指向上滚动, 列表滚动显示下面的内容
-//                dy < 0时为手指向下滚动, 列表滚动显示上面的内容
+                // dx : 水平滚动距离
+                // dy : 垂直滚动距离
+                // dx > 0时为手指向左滚动, 列表滚动显示右面的内容
+                // dx < 0时为手指向右滚动, 列表滚动显示左面的内容
+                // dy > 0时为手指向上滚动, 列表滚动显示下面的内容
+                // dy < 0时为手指向下滚动, 列表滚动显示上面的内容
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
                     lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
@@ -152,7 +150,6 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-
         // 刷新时模拟数据的变化
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -195,13 +192,14 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
         //.setNegativeButton("确定", null).show();
     }
 
+    // 子线程中执行网络访问，获取JSON数据的操作
     public class MyThread implements Runnable {
         @Override
         public void run() {
             BaseApplication baseApplication = (BaseApplication) getActivity().getApplication();
             // 创建Volley的JsonObjectRequest
             JsonObjectRequest request = (JsonObjectRequest) getNewsListJson(NEWS_API_SOCIAL);
-            // 添加到
+            // 添加到Volley的Queue中
             baseApplication.addToRequestQueue(request, TAG);
         }
     }
@@ -219,7 +217,7 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
                             try {
                                 List<NewsInfo> newsList = GsonData.parseJSONToList(response.toString());
                                 Message msg = new Message();
-                                msg.what = REQUEST_LIST;
+                                msg.what = MyHandler.REQUEST_NEWS_LIST;
                                 msg.obj = newsList;
                                 handler.sendMessage(msg);
                             } catch (JSONException e) {
@@ -236,20 +234,24 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
         return jsonObjectRequest;
     }
 
-    public class MyHandler extends Handler {
-        private WeakReference<MainSlidingFragment> reference;
+    private class MyHandler extends Handler {
+        // 对Fragment的弱引用
+        private final WeakReference<MainSlidingFragment> reference;
+
+        // Fragment请求JSON数据
+        public static final int REQUEST_NEWS_LIST = 1;
 
         public MyHandler(MainSlidingFragment fragment) {
-            reference = new WeakReference<MainSlidingFragment>(fragment);
+            reference = new WeakReference<>(fragment);
         }
 
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 1:
-                    List<NewsInfo> newsList = (List<NewsInfo>) msg.obj;
-                    mRecyclerViewAdapter.deleteAndAddItem(newsList);
-                    break;
+                case REQUEST_NEWS_LIST:
+                     List<NewsInfo> newsList = (List<NewsInfo>) msg.obj;
+                     mRecyclerViewAdapter.deleteAndAddItem(newsList);
+                     break;
             }
         }
     }

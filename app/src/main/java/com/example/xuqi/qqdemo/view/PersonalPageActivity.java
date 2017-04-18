@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -43,7 +42,7 @@ import static android.R.attr.path;
 /**
  * 个人信息页面
  */
-public class PersonalPageActivity extends AppCompatActivity implements View.OnClickListener {
+public class PersonalPageActivity extends BaseActivity implements View.OnClickListener {
     private ImageView icon;
     private Bitmap head;
     private TextView name, mail, phone, logout;
@@ -68,12 +67,6 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
         super.onNewIntent(intent);
         setIntent(intent);
         initDatas();
-    }
-
-    @Override
-    protected void onRestart() {
-        initDatas();
-        super.onRestart();
     }
 
     private void initDatas() {
@@ -128,7 +121,7 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
         toolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                showActivity(MainActivity.class);
             }
         });
         // 设置toolbar扩展栏的点击事件
@@ -137,7 +130,7 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.edit:
-                        EditPersonalInfoPageActivity.showActivity(PersonalPageActivity.this);
+                        showActivity(EditPersonalInfoPageActivity.class);
                         break;
                 }
                 return true;
@@ -153,12 +146,12 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
                     UserSessionManager.logout(PersonalPageActivity.this);
                     // 删除i.dat
                     UserSessionManager.reSetCurrentUser();
-                    MainActivity.showActivity(this);
+                    showActivity(MainActivity.class);
                     L.d("第三方用户退出登录");
                 } else if (NewsUser.getCurrentUser(NewsUser.class) != null) {
                     // Bmob用户退出登录
                     NewsUser.logOut();
-                    MainActivity.showActivity(this);
+                    showActivity(MainActivity.class);
                     L.d("Bmob用户退出登录");
                 }
                 break;
@@ -236,6 +229,7 @@ public class PersonalPageActivity extends AppCompatActivity implements View.OnCl
                         File file = saveImageToGallery(getApplicationContext(), head);// 保存在SD卡中
                         // 上传图片到Bmob
                         dialog = new LoadingDialog(this);
+                        dialog.setCancelable(false);
                         dialog.show();
                         uploadImage(imgPath);
 //                        Glide.with(PersonalPageActivity.this).load(file).transform(new GlideRoundTransform(getApplicationContext(), 10)).

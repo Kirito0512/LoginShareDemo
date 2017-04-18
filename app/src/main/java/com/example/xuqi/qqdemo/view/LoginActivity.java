@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -43,7 +42,7 @@ import cn.bmob.v3.listener.SaveListener;
 
 import static com.example.xuqi.qqdemo.Constants.WX_APPId;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     private TextView QQbutton, Sinabutton;
     public static IWXAPI wxapi;
     private String type = "";
@@ -178,7 +177,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                             if (e == null) {
                                                 dialog.dismiss();
                                                 Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-                                                MainActivity.showActivity(LoginActivity.this);
+                                                showActivity(MainActivity.class);
                                             } else {
                                                 dialog.dismiss();
                                                 Toast.makeText(LoginActivity.this, "注册失败", Toast.LENGTH_SHORT).show();
@@ -195,7 +194,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                             if (e == null) {
                                                 dialog.dismiss();
                                                 Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                                                MainActivity.showActivity(LoginActivity.this);
+                                                showActivity(MainActivity.class);
                                             } else {
                                                 dialog.dismiss();
                                                 Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();

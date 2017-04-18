@@ -1,6 +1,5 @@
 package com.example.xuqi.qqdemo.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -39,7 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
     private DrawerLayout mDrawerLayout;
     private CoordinatorLayout mCoodinatorLayout;
     private TextView name, mail;
@@ -131,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 switch (item.getItemId()) {
                     // 设置按钮
                     case R.id.nav_set:
-                        PersonalSettingActivity.showActivity(MainActivity.this);
+                        showActivity(PersonalSettingActivity.class);
                         mDrawerLayout.closeDrawers();
                         break;
                 }
@@ -149,8 +147,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             @Override
             public void onClick(View v) {
                 if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
-                    Intent intent = new Intent(MainActivity.this, PersonalPageActivity.class);
-                    startActivity(intent);
+                    showActivity(PersonalPageActivity.class);
                 } else {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
@@ -170,23 +167,25 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         // 将TabLayout和ViewPager进行关联，让两者联动起来
         mTabLayout.setupWithViewPager(mViewPager);
     }
-
+    // SingleTask启动模式，从别的Activity通过showActivity跳转过来时触发
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
         processIntent();
     }
 
-    @Override
-    protected void onRestart() {
-        checkIsLogin();
-        super.onRestart();
-    }
-
     private void processIntent() {
         checkIsLogin();
     }
 
+    // 在onNewIntent之后触发
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        processIntent();
+    }
+
+    // 检查是否登录&更新信息
     private void checkIsLogin() {
         // 第三方登录
         if (UserSessionManager.isAleadyLogin()) {
@@ -209,11 +208,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             name.setText("董小姐");
             icon.setImageResource(R.drawable.nav_icon);
         }
-    }
-
-    public static void showActivity(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        context.startActivity(intent);
     }
 
     // viewpager滑动监听的三个方法

@@ -1,9 +1,6 @@
 package com.example.xuqi.qqdemo.view;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -11,7 +8,7 @@ import android.widget.Toast;
 
 import com.example.xuqi.qqdemo.R;
 
-public class PersonalSettingActivity extends AppCompatActivity implements View.OnClickListener {
+public class PersonalSettingActivity extends BaseActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
     private RelativeLayout relativeLayout;
@@ -41,14 +38,9 @@ public class PersonalSettingActivity extends AppCompatActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_set:
-                ChangeBindPhoneActivity.startActivity(this);
+                showActivity(ChangeBindPhoneActivity.class);
                 Toast.makeText(this, "click", Toast.LENGTH_SHORT).show();
                 break;
         }
-    }
-
-    public static void showActivity(Context mContext) {
-        Intent intent = new Intent(mContext, PersonalSettingActivity.class);
-        mContext.startActivity(intent);
     }
 }

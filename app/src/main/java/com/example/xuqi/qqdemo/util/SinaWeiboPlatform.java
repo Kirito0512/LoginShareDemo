@@ -171,7 +171,9 @@ public class SinaWeiboPlatform extends Platform {
                         user.setHeadPhoto(iconUrl);
                         user.setSource("SINA");
                         UserSessionManager.setCurrentUser(user);
-                        MainActivity.showActivity(activity);
+                        Intent intent = new Intent(activity,MainActivity.class);
+                        activity.startActivity(intent);
+//                        MainActivity.showActivity(activity);
                     } else {
                         Toast.makeText(activity, response, Toast.LENGTH_LONG).show();
                     }

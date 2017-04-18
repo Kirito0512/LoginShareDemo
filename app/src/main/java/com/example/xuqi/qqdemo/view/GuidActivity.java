@@ -1,10 +1,7 @@
 package com.example.xuqi.qqdemo.view;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -20,7 +17,7 @@ import java.util.List;
  * 引导页
  */
 
-public class GuidActivity extends AppCompatActivity implements View.OnClickListener {
+public class GuidActivity extends BaseActivity implements View.OnClickListener {
     private ViewPager mViewPager;
     //容器
     private List<View> mList = new ArrayList<>();
@@ -109,11 +106,6 @@ public class GuidActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public static void showActivity(Context mContext) {
-        Intent intent = new Intent(mContext, GuidActivity.class);
-        mContext.startActivity(intent);
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -121,7 +113,7 @@ public class GuidActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_start:
             // 引导页第一第二页点击
             case R.id.iv_back:
-                MainActivity.showActivity(this);
+                showActivity(MainActivity.class);
                 finish();
                 break;
         }

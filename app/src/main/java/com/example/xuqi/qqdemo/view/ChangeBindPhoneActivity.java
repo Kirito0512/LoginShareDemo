@@ -1,12 +1,9 @@
 package com.example.xuqi.qqdemo.view;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +22,7 @@ import cn.bmob.sms.listener.RequestSMSCodeListener;
 import cn.bmob.sms.listener.VerifySMSCodeListener;
 import cn.bmob.v3.listener.UpdateListener;
 
-public class ChangeBindPhoneActivity extends AppCompatActivity implements View.OnClickListener {
+public class ChangeBindPhoneActivity extends BaseActivity implements View.OnClickListener {
     private EditText et_phone, et_vercode;
     private Button btn_confrim;
     private TextView tv_request_vercode;
@@ -109,7 +106,7 @@ public class ChangeBindPhoneActivity extends AppCompatActivity implements View.O
                                 public void done(cn.bmob.v3.exception.BmobException e) {
                                     if (e == null) {
                                         L.d("绑定成功");
-                                        PersonalSettingActivity.showActivity(ChangeBindPhoneActivity.this);
+                                        showActivity(PersonalSettingActivity.class);
                                     } else {
                                         L.d("绑定失败");
                                     }
@@ -123,10 +120,5 @@ public class ChangeBindPhoneActivity extends AppCompatActivity implements View.O
                 });
                 break;
         }
-    }
-
-    public static void startActivity(Context mContext) {
-        Intent intent = new Intent(mContext, ChangeBindPhoneActivity.class);
-        mContext.startActivity(intent);
     }
 }

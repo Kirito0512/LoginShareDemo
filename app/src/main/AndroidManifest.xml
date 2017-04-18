@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- 获取sd卡写的权限，用于文件上传和下载 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- 允许读取手机状态 用于创建BmobInstallation -->
+    <!-- 允许读取手机状态 用于创建Bmob Installation -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 
@@ -76,7 +76,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.LoginActivity" />
-        <activity android:name=".view.PersonalPageActivity" />
+        <!--个人主页-->
+        <activity
+            android:name=".view.PersonalPageActivity"
+            android:launchMode="singleTask" />
         <!-- 主页 -->
         <activity
             android:name=".view.MainActivity"
@@ -89,7 +92,7 @@
         <activity android:name=".view.EditPersonalInfoPageActivity" />
         <activity
             android:name=".view.PersonalSettingActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTask" />
         <activity android:name=".view.ChangeBindPhoneActivity" />
         <activity android:name=".view.Main2Activity"></activity>
     </application>

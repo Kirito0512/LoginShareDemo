@@ -3,7 +3,6 @@ package com.example.xuqi.qqdemo.view;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.example.xuqi.qqdemo.Constants;
@@ -13,7 +12,7 @@ import com.example.xuqi.qqdemo.util.UtilTools;
 
 import static com.example.xuqi.qqdemo.Constants.HANDLER_SPLASH;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
     /**
      * 1.延时2000ms
@@ -34,10 +33,10 @@ public class SplashActivity extends AppCompatActivity {
                     // 判断程序是否是第一次运行
                     if (isFirst()) {
                         // guideActivity
-                        GuidActivity.showActivity(SplashActivity.this);
+                        showActivity(GuidActivity.class);
                     } else {
                         // 不是第一次运行，进入MainActivity
-                        MainActivity.showActivity(SplashActivity.this);
+                        showActivity(MainActivity.class);
                     }
                     finish();
                     break;

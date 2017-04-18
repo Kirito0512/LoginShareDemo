@@ -1,12 +1,9 @@
 package com.example.xuqi.qqdemo.view;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -22,7 +19,7 @@ import com.example.xuqi.qqdemo.util.L;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
 
-public class EditPersonalInfoPageActivity extends AppCompatActivity implements View.OnClickListener {
+public class EditPersonalInfoPageActivity extends BaseActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
     private EditText et_usernamae, et_email;
@@ -100,7 +97,7 @@ public class EditPersonalInfoPageActivity extends AppCompatActivity implements V
                     // 关闭dialog
                     dialog.dismiss();
                     // 关闭Activity
-                    finish();
+                    showActivity(PersonalPageActivity.class);
                 } else {
                     L.d(e.toString());
                     Toast.makeText(EditPersonalInfoPageActivity.this, R.string.Bmob_error, Toast.LENGTH_SHORT).show();
@@ -109,11 +106,6 @@ public class EditPersonalInfoPageActivity extends AppCompatActivity implements V
                 }
             }
         });
-    }
-
-    public static void showActivity(Context mContext) {
-        Intent intent = new Intent(mContext, EditPersonalInfoPageActivity.class);
-        mContext.startActivity(intent);
     }
 
     @Override
