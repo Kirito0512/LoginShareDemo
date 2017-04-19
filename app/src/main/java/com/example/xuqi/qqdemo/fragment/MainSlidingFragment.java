@@ -5,7 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,8 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.adapter.MyRecyclerViewAdapter;
@@ -27,12 +24,11 @@ import com.example.xuqi.qqdemo.bean.NewsInfo;
 import com.example.xuqi.qqdemo.netdata.GsonData;
 import com.example.xuqi.qqdemo.util.L;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
+import com.example.xuqi.qqdemo.widget.RVDividerItemDecoration;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -45,7 +41,7 @@ import static com.example.xuqi.qqdemo.Constants.NEWS_APP_KEY;
  * Created by xuqi on 17/3/9.
  */
 
-public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, MyRecyclerViewAdapter.OnItemClickListener {
+public class MainSlidingFragment extends BaseNewsFragment {
 
     private View mView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -59,6 +55,7 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
     private LinearLayoutManager mLayoutManager;
     private MyRecyclerViewAdapter mRecyclerViewAdapter;
     private int lastVisibleItem;
+    private List<NewsInfo> newsList;
     private Handler handler = new MyHandler(this);
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,6 +79,8 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
         mRecyclerViewAdapter.setOnItemClickListener(this);
         // 绑定Adapter
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        // RecyclerView加上分割线
+        mRecyclerView.addItemDecoration(new RVDividerItemDecoration(getActivity(), RVDividerItemDecoration.VERTICAL_LIST));
         // 设置LayoutManager
         mRecyclerView.setLayoutManager(mLayoutManager);
 //        mRecyclerViewAdapter = new SlideRecyclerViewAdapter(getActivity(), list);
@@ -103,10 +102,10 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
 //            }
 //        });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // 监听recyclerview的滑动状态 && 上拉刷新
             mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 // 滚动状态变化时回调
-
                 // newState表示当前滚动状态
                 // newState有三个值
                 // SCROLL_STATE_IDLE = 0 表示静止没有滚动
@@ -120,12 +119,7 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
                             @Override
                             public void run() {
                                 Log.d(TAG, "run: 上拉刷新");
-                                List<String> newDatas = new ArrayList<String>();
-                                for (int i = 0; i < 5; i++) {
-                                    int index = i + 1;
-                                    newDatas.add("more time" + index);
-                                }
-                                mRecyclerViewAdapter.addMoreItem(newDatas);
+                                mRecyclerViewAdapter.addMoreItem(newsList);
                             }
                         }, 1000);
                     }
@@ -146,6 +140,8 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
                 }
             });
         }
+        // 获取JSON
+        new Thread(new MyThread()).start();
     }
 
     @Override
@@ -155,11 +151,7 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
             @Override
             public void run() {
                 mSwipeRefreshLayout.setRefreshing(false);
-                MyThread thread = new MyThread();
-                thread.run();
-//                int temp = (int) (Math.random() * 10);
-//                mRecyclerViewAdapter.mDatas.add(0, "new" + temp);
-//                mRecyclerViewAdapter.notifyDataSetChanged();
+                new Thread(new MyThread()).start();
             }
         }, 1000);
     }
@@ -210,26 +202,18 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
         if (!TextUtils.isEmpty(newsType)) {
             L.d(NEWS_API_ADDRESS + newsType + NEWS_APP_KEY);
             jsonObjectRequest = new JsonObjectRequest(NEWS_API_ADDRESS + newsType + NEWS_APP_KEY, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.d("xuqi", response.toString());
-                            try {
-                                List<NewsInfo> newsList = GsonData.parseJSONToList(response.toString());
-                                Message msg = new Message();
-                                msg.what = MyHandler.REQUEST_NEWS_LIST;
-                                msg.obj = newsList;
-                                handler.sendMessage(msg);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                    response -> {
+                        Log.d("xuqi", response.toString());
+                        try {
+                            List<NewsInfo> newsList1 = GsonData.parseJSONToList(response.toString());
+                            Message msg = new Message();
+                            msg.what = MyHandler.REQUEST_NEWS_LIST;
+                            msg.obj = newsList1;
+                            handler.sendMessage(msg);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("xuqi", error.getMessage(), error);
-                }
-            });
+                    }, error -> Log.e("xuqi", error.getMessage(), error));
         }
         return jsonObjectRequest;
     }
@@ -249,9 +233,9 @@ public class MainSlidingFragment extends Fragment implements SwipeRefreshLayout.
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REQUEST_NEWS_LIST:
-                     List<NewsInfo> newsList = (List<NewsInfo>) msg.obj;
-                     mRecyclerViewAdapter.deleteAndAddItem(newsList);
-                     break;
+                    newsList = (List<NewsInfo>) msg.obj;
+                    mRecyclerViewAdapter.deleteAndAddItem(newsList);
+                    break;
             }
         }
     }

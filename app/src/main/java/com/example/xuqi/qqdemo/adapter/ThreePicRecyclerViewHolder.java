@@ -13,12 +13,12 @@ import com.example.xuqi.qqdemo.R;
  */
 
 public class ThreePicRecyclerViewHolder extends RecyclerView.ViewHolder {
-    private TextView tvThrPicTitle, tvThrPicAuthor, tvThrPicTime;
-    private ImageView ivThrPicOne, ivThrPicTwo, ivThrPicThree;
+    public TextView tvThrPicTitle, tvThrPicAuthor, tvThrPicTime;
+    public ImageView ivThrPicOne, ivThrPicTwo, ivThrPicThree;
 
     public ThreePicRecyclerViewHolder(View itemView) {
         super(itemView);
-        tvThrPicTitle = (TextView) itemView.findViewById(R.id.tv_three_pic_author);
+        tvThrPicTitle = (TextView) itemView.findViewById(R.id.tv_three_pic_title);
         tvThrPicTime = (TextView) itemView.findViewById(R.id.tv_three_pic_time);
         tvThrPicAuthor = (TextView) itemView.findViewById(R.id.tv_three_pic_author);
 

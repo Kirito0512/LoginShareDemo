@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
@@ -14,7 +12,7 @@
         android:text="@string/news_title"/>
 
     <LinearLayout
-        android:layout_marginTop="5dp"
+        android:paddingTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -23,28 +21,29 @@
             android:id="@+id/iv_three_pic_one"
             android:layout_width="105dp"
             android:layout_height="75dp"
-            android:scaleType="fitCenter"
+            android:scaleType="centerCrop"
             android:background="@color/black"/>
 
         <ImageView
             android:id="@+id/iv_three_pic_two"
             android:layout_width="105dp"
             android:layout_height="75dp"
-            android:layout_marginStart="20dp"
-            android:scaleType="fitCenter"
+            android:layout_marginStart="5dp"
+            android:scaleType="centerCrop"
             android:background="@color/black"/>
 
         <ImageView
             android:id="@+id/iv_three_pic_three"
             android:layout_width="105dp"
             android:layout_height="75dp"
-            android:layout_marginStart="20dp"
-            android:scaleType="fitCenter"
+            android:layout_marginStart="5dp"
+            android:scaleType="centerCrop"
             android:background="@color/black"/>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginTop="5dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
