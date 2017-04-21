@@ -76,7 +76,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.LoginActivity" />
-        <!--个人主页-->
+        <!-- 个人主页 -->
         <activity
             android:name=".view.PersonalPageActivity"
             android:launchMode="singleTask" />
@@ -94,7 +94,8 @@
             android:name=".view.PersonalSettingActivity"
             android:launchMode="singleTask" />
         <activity android:name=".view.ChangeBindPhoneActivity" />
-        <activity android:name=".view.Main2Activity"></activity>
+        <activity android:name=".view.Main2Activity" />
+        <activity android:name=".view.NewsContentActivity"></activity>
     </application>
 
 </manifest>

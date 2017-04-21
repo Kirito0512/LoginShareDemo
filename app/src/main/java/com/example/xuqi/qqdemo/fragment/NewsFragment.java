@@ -1,6 +1,7 @@
 package com.example.xuqi.qqdemo.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import com.example.xuqi.qqdemo.bean.NewsInfo;
 import com.example.xuqi.qqdemo.netdata.GsonData;
 import com.example.xuqi.qqdemo.util.L;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
+import com.example.xuqi.qqdemo.view.NewsContentActivity;
 import com.example.xuqi.qqdemo.widget.RVDividerItemDecoration;
 
 import org.json.JSONException;
@@ -33,7 +35,6 @@ import java.util.List;
 
 import static android.content.ContentValues.TAG;
 import static com.example.xuqi.qqdemo.Constants.NEWS_API_ADDRESS;
-import static com.example.xuqi.qqdemo.Constants.NEWS_API_SOCIAL;
 import static com.example.xuqi.qqdemo.Constants.NEWS_APP_KEY;
 
 
@@ -41,7 +42,7 @@ import static com.example.xuqi.qqdemo.Constants.NEWS_APP_KEY;
  * Created by xuqi on 17/3/9.
  */
 
-public class MainSlidingFragment extends BaseNewsFragment {
+public class NewsFragment extends BaseNewsFragment {
 
     private View mView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -57,6 +58,8 @@ public class MainSlidingFragment extends BaseNewsFragment {
     private int lastVisibleItem;
     private List<NewsInfo> newsList;
     private Handler handler = new MyHandler(this);
+    public static final String ARGUMENT = "argument";
+    private String newsType;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.frag_main, container, false);
@@ -65,6 +68,11 @@ public class MainSlidingFragment extends BaseNewsFragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Bundle bundle = getArguments();
+        // 获取从MainActivity传入的值，即新闻类别
+        if (bundle != null)
+            newsType = bundle.getString(ARGUMENT);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.id_swiperefreshlayout);
         // 设置刷新时，指示器旋转时的颜色
         mSwipeRefreshLayout.setColorSchemeResources(R.color.main_blue_light, R.color.main_blue_dark);
@@ -74,6 +82,7 @@ public class MainSlidingFragment extends BaseNewsFragment {
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.id_recyclerview);
         mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
 
+        //
         mRecyclerViewAdapter = new MyRecyclerViewAdapter(getActivity());
         // RecyclerView的item的点击事件监听
         mRecyclerViewAdapter.setOnItemClickListener(this);
@@ -140,8 +149,8 @@ public class MainSlidingFragment extends BaseNewsFragment {
                 }
             });
         }
-        // 获取JSON
-        new Thread(new MyThread()).start();
+        // 刷新出内容
+        onRefresh();
     }
 
     @Override
@@ -158,6 +167,15 @@ public class MainSlidingFragment extends BaseNewsFragment {
 
     @Override
     public void onItemClick(View view, int position) {
+        // 获取点击的item的url
+        String newsUrl = newsList.get(position).getUrl();
+        String newsTitle = newsList.get(position).getAuthor_name();
+        // 将url放入intent
+        Intent intent = new Intent(getActivity(), NewsContentActivity.class);
+        intent.putExtra("newsUrl", newsUrl);
+        intent.putExtra("newsTitle", newsTitle);
+        // 跳转到NewsContentActivity
+        startActivity(intent);
         SnackbarUtil.show(mRecyclerView, getString(R.string.item_clicked), 0);
     }
 
@@ -190,7 +208,7 @@ public class MainSlidingFragment extends BaseNewsFragment {
         public void run() {
             BaseApplication baseApplication = (BaseApplication) getActivity().getApplication();
             // 创建Volley的JsonObjectRequest
-            JsonObjectRequest request = (JsonObjectRequest) getNewsListJson(NEWS_API_SOCIAL);
+            JsonObjectRequest request = (JsonObjectRequest) getNewsListJson(newsType);
             // 添加到Volley的Queue中
             baseApplication.addToRequestQueue(request, TAG);
         }
@@ -220,12 +238,12 @@ public class MainSlidingFragment extends BaseNewsFragment {
 
     private class MyHandler extends Handler {
         // 对Fragment的弱引用
-        private final WeakReference<MainSlidingFragment> reference;
+        private final WeakReference<NewsFragment> reference;
 
         // Fragment请求JSON数据
         public static final int REQUEST_NEWS_LIST = 1;
 
-        public MyHandler(MainSlidingFragment fragment) {
+        public MyHandler(NewsFragment fragment) {
             reference = new WeakReference<>(fragment);
         }
 
@@ -238,5 +256,19 @@ public class MainSlidingFragment extends BaseNewsFragment {
                     break;
             }
         }
+    }
+
+    /**
+     * 传入需要的参数，设置给arguments
+     *
+     * @param argument
+     * @return
+     */
+    public static NewsFragment newInstance(String argument) {
+        Bundle bundle = new Bundle();
+        bundle.putString(ARGUMENT, argument);
+        NewsFragment contentFragment = new NewsFragment();
+        contentFragment.setArguments(bundle);
+        return contentFragment;
     }
 }

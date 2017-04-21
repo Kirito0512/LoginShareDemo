@@ -3,7 +3,6 @@ package com.example.xuqi.qqdemo.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,7 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,12 +23,14 @@ import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.adapter.MyViewPagerAdapter;
 import com.example.xuqi.qqdemo.bean.NewsUser;
 import com.example.xuqi.qqdemo.bean.NewsUserInfo;
-import com.example.xuqi.qqdemo.fragment.MainSlidingFragment;
+import com.example.xuqi.qqdemo.fragment.NewsFragment;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
 import com.example.xuqi.qqdemo.util.UserSessionManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -47,6 +47,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     private TabLayout mTabLayout;
     // TabLayout中的tab标题
     private String[] mTitles;
+    // tab标题的对应newsType
+    private String[] mTitlesCN;
     // 填充到ViewPager中的Fragment
     private List<Fragment> mFragments;
     // ViewPager的数据适配器
@@ -67,8 +69,14 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     }
 
     private void initViewPagerData() {
+        Map titleMap = new HashMap<String, String>();
         // Tab的标题采用string-array的方法保存，在res/values/arrays.xml中写
         mTitles = getResources().getStringArray(R.array.tab_titles);
+        // tab标题对应的拼音（获取新闻内容要用）
+        mTitlesCN = getResources().getStringArray(R.array.tab_CN_titles);
+        for (int i = 0; i < mTitles.length; i++) {
+            titleMap.put(mTitles[i], mTitlesCN[i]);
+        }
         //初始化填充到ViewPager中的Fragment集合
         mFragments = new ArrayList<>();
         for (int i = 0; i < mTitles.length; i++) {
@@ -77,7 +85,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 //            MyFragment mFragment = new MyFragment();
 //            mFragment.setArguments(mBundle);
 //            mFragments.add(i, mFragment);
-            MainSlidingFragment mFragment = new MainSlidingFragment();
+            String title = (String) titleMap.get(mTitles[i]);
+            NewsFragment mFragment = new NewsFragment().newInstance(title);
             mFragments.add(i, mFragment);
         }
     }
@@ -91,23 +100,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         // 为ToolBar设置导航按键
         // 初始化Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-//        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.home:
-//                        mDrawerLayout.openDrawer(GravityCompat.START);
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
+        toolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(GravityCompat.START));
 
         // 悬浮按钮初始化&点击事件
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -123,18 +116,15 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         // 将navigationview默认选中这一项
         navView.setCheckedItem(R.id.nav_fav);
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    // 设置按钮
-                    case R.id.nav_set:
-                        showActivity(PersonalSettingActivity.class);
-                        mDrawerLayout.closeDrawers();
-                        break;
-                }
-                return true;
+        navView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                // 设置按钮
+                case R.id.nav_set:
+                    showActivity(PersonalSettingActivity.class);
+                    mDrawerLayout.closeDrawers();
+                    break;
             }
+            return true;
         });
 
         // 导入NavigationView的头部布局文件
@@ -167,6 +157,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         // 将TabLayout和ViewPager进行关联，让两者联动起来
         mTabLayout.setupWithViewPager(mViewPager);
     }
+
     // SingleTask启动模式，从别的Activity通过showActivity跳转过来时触发
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);

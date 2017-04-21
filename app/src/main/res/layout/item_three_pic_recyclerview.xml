@@ -9,7 +9,8 @@
         android:paddingTop="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/news_title"/>
+        android:text="@string/news_title"
+        android:textColor="@color/black"/>
 
     <LinearLayout
         android:paddingTop="5dp"
@@ -22,7 +23,7 @@
             android:layout_width="105dp"
             android:layout_height="75dp"
             android:scaleType="centerCrop"
-            android:background="@color/black"/>
+            android:background="@drawable/new_default"/>
 
         <ImageView
             android:id="@+id/iv_three_pic_two"
@@ -30,7 +31,7 @@
             android:layout_height="75dp"
             android:layout_marginStart="5dp"
             android:scaleType="centerCrop"
-            android:background="@color/black"/>
+            android:background="@drawable/new_default"/>
 
         <ImageView
             android:id="@+id/iv_three_pic_three"
@@ -38,7 +39,7 @@
             android:layout_height="75dp"
             android:layout_marginStart="5dp"
             android:scaleType="centerCrop"
-            android:background="@color/black"/>
+            android:background="@drawable/new_default"/>
     </LinearLayout>
 
     <LinearLayout
@@ -52,13 +53,15 @@
             android:id="@+id/tv_three_pic_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/news_author"/>
+            android:text="@string/news_author"
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/tv_three_pic_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
-            android:text="@string/news_time"/>
+            android:text="@string/news_time"
+            android:textColor="@color/black"/>
     </LinearLayout>
 </LinearLayout>

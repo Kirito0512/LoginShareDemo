@@ -24,6 +24,7 @@
     <string name="thumb_up">好评鼓励</string>
     <string name="suggest">意见反馈</string>
     <string name="set"> 设置 </string>
+    <string name="daynight">模式</string>
     <string name="register_login_et_hint">请输入手机号码</string>
     <string name="register_login_btn">确定</string>
     <string name="register_login_weixin">微信</string>

@@ -21,6 +21,7 @@ package com.example.xuqi.qqdemo.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.bean.NewsInfo;
+import com.example.xuqi.qqdemo.util.L;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,7 @@ import java.util.List;
 /**
  * Created by Monkey on 2015/6/29.
  */
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     // 上拉加载更多
     public static final int PULLUP_LOAD_MORE = 0;
@@ -52,6 +54,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static final int TYPE_ONE_PIC_ITEM = TYPE_FOOTER + 1;
     // 新闻列表中  "下面三张图上面一行文字"  类型的Item
     private static final int TYPE_THREE_PIC_ITEM = TYPE_ONE_PIC_ITEM + 1;
+    // 初次打开显示正在加载界面
+    private static final int TYPE_REFRESH = TYPE_THREE_PIC_ITEM + 1;
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
@@ -85,7 +89,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      * 创建ViewHolder
      */
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // 普通Item
 //        if (viewType == TYPE_ITEM) {
 //            View mView = mLayoutInflater.inflate(R.layout.item_recyclerview, parent, false);
@@ -96,13 +100,17 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             View mView = mLayoutInflater.inflate(R.layout.item_one_pic_recyclerview, parent, false);
             OnePicRecyclerViewHolder mViewHolder = new OnePicRecyclerViewHolder(mView);
             return mViewHolder;
-        } else if(viewType == TYPE_THREE_PIC_ITEM){
+        } else if (viewType == TYPE_THREE_PIC_ITEM) {
             View mView = mLayoutInflater.inflate(R.layout.item_three_pic_recyclerview, parent, false);
             ThreePicRecyclerViewHolder mViewHolder = new ThreePicRecyclerViewHolder(mView);
             return mViewHolder;
         } else if (viewType == TYPE_FOOTER) {  // footItem
             View mView = mLayoutInflater.inflate(R.layout.foot_item_recyclerview, parent, false);
             MyRecyclerViewFootHolder mViewHolder = new MyRecyclerViewFootHolder(mView);
+            return mViewHolder;
+        } else if (viewType == TYPE_REFRESH) {
+            View mView = mLayoutInflater.inflate(R.layout.item_refresh_recyclerview, parent, false);
+            NewsRefreshViewholder mViewHolder = new NewsRefreshViewholder(mView);
             return mViewHolder;
         }
         return null;
@@ -112,7 +120,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      * 绑定ViewHoler，给item中的控件设置数据
      */
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 //        if (holder instanceof MyRecyclerViewHolder) {
 //            // 转型为MyRecyclerViewHolder
 //            final MyRecyclerViewHolder itemholder = (MyRecyclerViewHolder) holder;
@@ -209,7 +217,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 //            return TYPE_ITEM;
 //        }
         // 底部上拉刷新item
-        if (position + 1 == getItemCount()) {
+        L.d("itemCount = " + getItemCount());
+        if (getItemCount() == 1) {
+            return TYPE_REFRESH;
+        } else if (position + 1 == getItemCount()) {
             return TYPE_FOOTER;
         }
         // 一张图的item
@@ -250,15 +261,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemCount() {
-//        return mDatas.size() + 1;
         return newsList.size() + 1;
     }
 
     public void deleteItem(int position) {
-//        if (position > -1 && position < mDatas.size()) {
-//            mDatas.remove(position);
-//            notifyDataSetChanged();
-//        }
         if (position > -1 && position < newsList.size()) {
             newsList.remove(position);
             notifyDataSetChanged();
