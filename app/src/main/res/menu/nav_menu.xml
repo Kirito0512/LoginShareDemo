@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
+    <!--none可以使点击后不会生成底纹-->
+    <group android:checkableBehavior="none">
         <item
             android:id="@+id/nav_fav"
             android:icon="@drawable/ic_favorite_border_black_24dp"

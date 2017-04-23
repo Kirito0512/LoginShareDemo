@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/feedbacktitle"
-            android:layout_marginEnd="60dp"
             android:textSize="18sp"/>
 
         </android.support.v7.widget.Toolbar>

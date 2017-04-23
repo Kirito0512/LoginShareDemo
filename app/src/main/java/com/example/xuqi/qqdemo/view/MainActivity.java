@@ -112,15 +112,20 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         // 导航页NavigationView初始化&点击事件
         final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         // 将navigationview默认选中这一项
-        navView.setCheckedItem(R.id.nav_fav);
+//        navView.setCheckedItem(R.id.nav_fav);
         navView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 // 设置按钮
                 case R.id.nav_set:
                     showActivity(PersonalSettingActivity.class);
-                    mDrawerLayout.closeDrawers();
+                    break;
+
+                // 设置反馈按钮
+                case R.id.nav_suggest:
+                    showActivity(NewsFeedBackActivity.class);
                     break;
             }
+            mDrawerLayout.closeDrawers();
             return true;
         });
 
