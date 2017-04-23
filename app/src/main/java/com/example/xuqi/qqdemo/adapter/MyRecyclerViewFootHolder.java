@@ -2,6 +2,7 @@ package com.example.xuqi.qqdemo.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.xuqi.qqdemo.R;
@@ -12,9 +13,12 @@ import com.example.xuqi.qqdemo.R;
  */
 
 public class MyRecyclerViewFootHolder extends RecyclerView.ViewHolder {
-    public TextView footview_item;
+    public TextView tv_footview;
+    public ProgressBar pb_footview;
+
     public MyRecyclerViewFootHolder(View itemView) {
         super(itemView);
-        footview_item = (TextView) itemView.findViewById(R.id.foot_view_item);
+        tv_footview = (TextView) itemView.findViewById(R.id.tv_foot_view_item);
+        pb_footview = (ProgressBar) itemView.findViewById(R.id.pb_foot_view_item);
     }
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_all_gray"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_feed_back"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:navigationIcon="@drawable/ic_back_24dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <TextView
+            android:id="@+id/tv_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/feedbacktitle"
+            android:layout_marginEnd="60dp"
+            android:textSize="18sp"/>
+
+        </android.support.v7.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/et_personal_suggestion_content"
+        android:layout_below="@+id/toolbar_feed_back"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        android:gravity="top"
+        android:hint="@string/personal_suggesion_content_hint"
+        android:maxLength="300"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp"
+        android:textColor="@color/base_txt_gray1"
+        android:textColorHint="@color/base_txt_gray4"
+        android:textSize="@dimen/base_textsize_small_14sp" />
+
+
+    <EditText
+        android:id="@+id/et_personal_suggestion_mail"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_personal_suggestion_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:gravity="top"
+        android:hint="@string/personal_suggesion_phone_hint"
+        android:inputType="phone"
+        android:maxLength="14"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp"
+        android:textColor="@color/base_txt_gray1"
+        android:textColorHint="@color/base_txt_gray4"
+        android:textSize="@dimen/base_textsize_small_14sp" />
+</RelativeLayout>

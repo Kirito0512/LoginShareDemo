@@ -104,12 +104,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
         // 悬浮按钮初始化&点击事件
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // SnackBar可以允许用户对当前情况进行简单的处理
-                SnackbarUtil.show(v, "Data deleted", Snackbar.LENGTH_SHORT);
-            }
+        fab.setOnClickListener(v -> {
+            // SnackBar可以允许用户对当前情况进行简单的处理
+            SnackbarUtil.show(v, "Data deleted", Snackbar.LENGTH_SHORT);
         });
 
         // 导航页NavigationView初始化&点击事件
@@ -133,15 +130,12 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         mail = (TextView) headerView.findViewById(R.id.mail);
         icon = (CircleImageView) headerView.findViewById(R.id.icon_image);
         // 导航页用户头像点击
-        icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
-                    showActivity(PersonalPageActivity.class);
-                } else {
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                }
+        icon.setOnClickListener(v -> {
+            if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
+                showActivity(PersonalPageActivity.class);
+            } else {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
             }
         });
 

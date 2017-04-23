@@ -65,4 +65,7 @@
     <string name="news_title">新闻标题</string>
     <string name="news_author">作者</string>
     <string name="news_time">发布时间</string>
+    <string name="personal_suggesion_content_hint">请输入您的问题</string>
+    <string name="personal_suggesion_phone_hint">请输入您的邮箱或者QQ，便于我们联系您</string>
+    <string name="feedbacktitle">意见反馈</string>
 </resources>

@@ -34,6 +34,8 @@ import com.example.xuqi.qqdemo.util.L;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.View.GONE;
+
 /**
  * Created by Monkey on 2015/6/29.
  */
@@ -43,6 +45,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     public static final int PULLUP_LOAD_MORE = 0;
     // 正在加载中
     public static final int LOADING_MORE = 1;
+    // 隐藏上拉加载
+    public static final int HIDE_PULLUP = 2;
     // 上拉加载更多状态 默认为0
     private int load_more_status = 0;
 
@@ -57,32 +61,27 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     // 初次打开显示正在加载界面
     private static final int TYPE_REFRESH = TYPE_THREE_PIC_ITEM + 1;
 
+    public Context mContext;
+    public List<NewsInfo> newsList;
+    public LayoutInflater mLayoutInflater;
+
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
 
         void onItemLongClick(View view, int position);
     }
 
+    // item点击事件监听器
     public OnItemClickListener mOnItemClickListener;
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.mOnItemClickListener = listener;
     }
 
-    public Context mContext;
-    public List<String> mDatas;
-    public List<NewsInfo> newsList;
-    public LayoutInflater mLayoutInflater;
-
     public MyRecyclerViewAdapter(Context mContext) {
         this.mContext = mContext;
         mLayoutInflater = LayoutInflater.from(mContext);
-        mDatas = new ArrayList<>();
         newsList = new ArrayList<>();
-        // 共58项
-        for (int i = 'A'; i <= 'z'; i++) {
-            mDatas.add((char) i + "");
-        }
     }
 
     /**
@@ -90,12 +89,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // 普通Item
-//        if (viewType == TYPE_ITEM) {
-//            View mView = mLayoutInflater.inflate(R.layout.item_recyclerview, parent, false);
-//            MyRecyclerViewHolder mViewHolder = new MyRecyclerViewHolder(mView);
-//            return mViewHolder;
-//        }
         if (viewType == TYPE_ONE_PIC_ITEM) {
             View mView = mLayoutInflater.inflate(R.layout.item_one_pic_recyclerview, parent, false);
             OnePicRecyclerViewHolder mViewHolder = new OnePicRecyclerViewHolder(mView);
@@ -121,47 +114,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
      */
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-//        if (holder instanceof MyRecyclerViewHolder) {
-//            // 转型为MyRecyclerViewHolder
-//            final MyRecyclerViewHolder itemholder = (MyRecyclerViewHolder) holder;
-//            if (mOnItemClickListener != null) {
-//                itemholder.itemView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        mOnItemClickListener.onItemClick(itemholder.itemView, position);
-//                    }
-//                });
-//
-//                itemholder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-//                    @Override
-//                    public boolean onLongClick(View v) {
-//                        mOnItemClickListener.onItemLongClick(itemholder.itemView, position);
-//                        return true;
-//                    }
-//                });
-//            }
-//            itemholder.mTextView.setText(mDatas.get(position));
-//        }
         // 新闻列表中  "左图右文字"  类型的Item
         if (holder instanceof OnePicRecyclerViewHolder) {
             final OnePicRecyclerViewHolder itemholder = (OnePicRecyclerViewHolder) holder;
             // 设置item的点击事件 点击&长按
             if (mOnItemClickListener != null) {
-                itemholder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mOnItemClickListener.onItemClick(itemholder.itemView, position);
-                    }
-                });
+                itemholder.itemView.setOnClickListener(v -> mOnItemClickListener.onItemClick(itemholder.itemView, position));
 
-                itemholder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        mOnItemClickListener.onItemLongClick(itemholder.itemView, position);
-                        return true;
-                    }
+                itemholder.itemView.setOnLongClickListener(v -> {
+                    mOnItemClickListener.onItemLongClick(itemholder.itemView, position);
+                    return true;
                 });
             }
+            // 加载信息
             itemholder.tvOnePicTitle.setText(newsList.get(position).getTitle());
             itemholder.tvOnePicAuthor.setText(newsList.get(position).getAuthor_name());
             itemholder.tvOnePicTime.setText(newsList.get(position).getDate());
@@ -173,24 +138,18 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
             final ThreePicRecyclerViewHolder itemholder = (ThreePicRecyclerViewHolder) holder;
             // 设置item的点击事件 点击&长按
             if (mOnItemClickListener != null) {
-                itemholder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mOnItemClickListener.onItemClick(itemholder.itemView, position);
-                    }
-                });
+                itemholder.itemView.setOnClickListener(v -> mOnItemClickListener.onItemClick(itemholder.itemView, position));
 
-                itemholder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        mOnItemClickListener.onItemLongClick(itemholder.itemView, position);
-                        return true;
-                    }
+                itemholder.itemView.setOnLongClickListener(v -> {
+                    mOnItemClickListener.onItemLongClick(itemholder.itemView, position);
+                    return true;
                 });
             }
+            // 加载新闻文字信息
             itemholder.tvThrPicTitle.setText(newsList.get(position).getTitle());
             itemholder.tvThrPicAuthor.setText(newsList.get(position).getAuthor_name());
             itemholder.tvThrPicTime.setText(newsList.get(position).getDate());
+            // 加载三张图片
             Glide.with(mContext).load(newsList.get(position).getThumbnail_pic_s()).into(itemholder.ivThrPicOne);
             Glide.with(mContext).load(newsList.get(position).getThumbnail_pic_s02()).into(itemholder.ivThrPicTwo);
             Glide.with(mContext).load(newsList.get(position).getThumbnail_pic_s03()).into(itemholder.ivThrPicThree);
@@ -199,11 +158,20 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
             MyRecyclerViewFootHolder footViewHolder = (MyRecyclerViewFootHolder) holder;
             switch (load_more_status) {
                 case PULLUP_LOAD_MORE:
-                    footViewHolder.footview_item.setText("上拉加载更多......");
+                    if (footViewHolder.tv_footview.getVisibility() == GONE)
+                        footViewHolder.tv_footview.setVisibility(View.VISIBLE);
+
+                    if (footViewHolder.pb_footview.getVisibility() == GONE)
+                        footViewHolder.pb_footview.setVisibility(View.VISIBLE);
+
+                    footViewHolder.tv_footview.setText("上拉加载更多......");
                     break;
                 case LOADING_MORE:
-                    footViewHolder.footview_item.setText("正在加载更多数据......");
+                    footViewHolder.tv_footview.setText("正在加载更多数据......");
                     break;
+                case HIDE_PULLUP:
+                    footViewHolder.tv_footview.setVisibility(GONE);
+                    footViewHolder.pb_footview.setVisibility(GONE);
             }
         }
     }
@@ -216,11 +184,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 //        } else {
 //            return TYPE_ITEM;
 //        }
-        // 底部上拉刷新item
         L.d("itemCount = " + getItemCount());
+        // 刚打开APP，还未加载上数据时显示的进度条
         if (getItemCount() == 1) {
             return TYPE_REFRESH;
-        } else if (position + 1 == getItemCount()) {
+        }
+        // 底部上拉刷新item
+        else if (position + 1 == getItemCount()) {
             return TYPE_FOOTER;
         }
         // 一张图的item
@@ -242,8 +212,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         * 加载完成，没有更多数据了
         * NO_MORE_DATA = 2
        */
-    public void changeMoreStatus(int status) {
+    public void setMoreStatus(int status) {
         load_more_status = status;
+        // 必须要有这句代码
         notifyDataSetChanged();
     }
 
@@ -252,11 +223,17 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         notifyDataSetChanged();
     }
 
-    // 添加NewsInfo的list进去
-    public void deleteAndAddItem(List<NewsInfo> newsDatas) {
+    // 下拉刷新时，为了能够一页一页的加载item，我们先把原有的list与刷新得到的list合并，再通过上拉刷新，一页一页通过addMoreItem加回来，原有的list我们直接clear掉
+    public void deleteAllItem(){
         newsList.clear();
-        newsList.addAll(newsDatas);
         notifyDataSetChanged();
+    }
+
+    // 获取adapter里的news item数据
+    public List<NewsInfo> getListItem(){
+        if(newsList != null)
+            return newsList;
+        return null;
     }
 
     @Override
