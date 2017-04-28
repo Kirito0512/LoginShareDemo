@@ -94,9 +94,9 @@
             android:name=".view.PersonalSettingActivity"
             android:launchMode="singleTask" />
         <activity android:name=".view.ChangeBindPhoneActivity" />
-        <activity android:name=".view.Main2Activity" />
         <activity android:name=".view.NewsContentActivity" />
-        <activity android:name=".view.NewsFeedBackActivity"></activity>
+        <activity android:name=".view.NewsFeedBackActivity" />
+        <activity android:name=".view.DragViewPagerTitleActivity"></activity>
     </application>
 
 </manifest>

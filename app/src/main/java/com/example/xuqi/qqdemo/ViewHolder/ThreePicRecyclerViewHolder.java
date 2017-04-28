@@ -1,4 +1,4 @@
-package com.example.xuqi.qqdemo.adapter;
+package com.example.xuqi.qqdemo.ViewHolder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

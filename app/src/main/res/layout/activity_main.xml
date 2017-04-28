@@ -35,22 +35,31 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:title="新闻资讯" />
 
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/id_tablayout"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/white"
-                app:tabSelectedTextColor="@color/white" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/id_tablayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/white"
+                    app:tabSelectedTextColor="@color/white" />
+
+                <ImageView
+                    android:id="@+id/iv_add_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_add_black_24dp" />
+
+            </LinearLayout>
 
         </android.support.design.widget.AppBarLayout>
-
-
-        <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="@color/black_alpha_60" />-->
 
         <!--我们常用的ViewPager，不多说了。你会发现多了一个 app:layout_behavior 属性，没错，-->
         <!--如果你使用CoordinatorLayout来实现Toolbar滚动渐变消失动画效果，那就必须在它下面的那个控件中加入这个属性，-->

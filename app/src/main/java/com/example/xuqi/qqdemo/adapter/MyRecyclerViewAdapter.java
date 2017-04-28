@@ -28,6 +28,10 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.example.xuqi.qqdemo.R;
+import com.example.xuqi.qqdemo.ViewHolder.MyRecyclerViewFootHolder;
+import com.example.xuqi.qqdemo.ViewHolder.NewsRefreshViewholder;
+import com.example.xuqi.qqdemo.ViewHolder.OnePicRecyclerViewHolder;
+import com.example.xuqi.qqdemo.ViewHolder.ThreePicRecyclerViewHolder;
 import com.example.xuqi.qqdemo.bean.NewsInfo;
 import com.example.xuqi.qqdemo.util.L;
 

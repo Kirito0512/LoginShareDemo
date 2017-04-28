@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -53,6 +54,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     private List<Fragment> mFragments;
     // ViewPager的数据适配器
     private MyViewPagerAdapter mViewPagerAdapter;
+    // 首页Tab右侧的加号
+    private ImageView mImageViewAddTab;
 
     private boolean mIsExit = false;
     private static final String TAG = "MainActivity";
@@ -97,6 +100,12 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mTabLayout = (TabLayout) findViewById(R.id.id_tablayout);
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
+        mImageViewAddTab = (ImageView) findViewById(R.id.iv_add_title);
+        // 将当前用户关注的新闻Title传递保存到Bundle中
+        Bundle bundle = new Bundle();
+        bundle.putStringArray("title", mTitles);
+        // 加号的点击事件，跳转到修改新闻关注栏目修改Activity
+        mImageViewAddTab.setOnClickListener(v -> showActivity(DragViewPagerTitleActivity.class, bundle));
         // 为ToolBar设置导航按键
         // 初始化Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
