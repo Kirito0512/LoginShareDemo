@@ -123,11 +123,20 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
             final OnePicRecyclerViewHolder itemholder = (OnePicRecyclerViewHolder) holder;
             // 设置item的点击事件 点击&长按
             if (mOnItemClickListener != null) {
-                itemholder.itemView.setOnClickListener(v -> mOnItemClickListener.onItemClick(itemholder.itemView, position));
+                itemholder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOnItemClickListener.onItemClick(itemholder.itemView, position);
 
-                itemholder.itemView.setOnLongClickListener(v -> {
-                    mOnItemClickListener.onItemLongClick(itemholder.itemView, position);
-                    return true;
+                    }
+                });
+
+                itemholder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        mOnItemClickListener.onItemLongClick(itemholder.itemView, position);
+                        return true;
+                    }
                 });
             }
             // 加载信息
@@ -142,11 +151,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
             final ThreePicRecyclerViewHolder itemholder = (ThreePicRecyclerViewHolder) holder;
             // 设置item的点击事件 点击&长按
             if (mOnItemClickListener != null) {
-                itemholder.itemView.setOnClickListener(v -> mOnItemClickListener.onItemClick(itemholder.itemView, position));
+                itemholder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOnItemClickListener.onItemClick(itemholder.itemView, position);
+                    }
+                });
 
-                itemholder.itemView.setOnLongClickListener(v -> {
-                    mOnItemClickListener.onItemLongClick(itemholder.itemView, position);
-                    return true;
+                itemholder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        mOnItemClickListener.onItemLongClick(itemholder.itemView, position);
+                        return true;
+                    }
                 });
             }
             // 加载新闻文字信息
@@ -228,14 +245,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     // 下拉刷新时，为了能够一页一页的加载item，我们先把原有的list与刷新得到的list合并，再通过上拉刷新，一页一页通过addMoreItem加回来，原有的list我们直接clear掉
-    public void deleteAllItem(){
+    public void deleteAllItem() {
         newsList.clear();
         notifyDataSetChanged();
     }
 
     // 获取adapter里的news item数据
-    public List<NewsInfo> getListItem(){
-        if(newsList != null)
+    public List<NewsInfo> getListItem() {
+        if (newsList != null)
             return newsList;
         return null;
     }

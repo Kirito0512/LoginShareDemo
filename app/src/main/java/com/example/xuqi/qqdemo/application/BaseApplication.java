@@ -13,10 +13,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.xuqi.qqdemo.Constants;
+import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.util.ShareUtils;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.bmob.sms.BmobSMS;
 import cn.bmob.v3.Bmob;
@@ -33,6 +37,12 @@ public class BaseApplication extends Application {
     private RequestQueue queues;
     public static final String TAG = "MyApplication";
     private static BaseApplication instance;
+    // 所有新闻Tab的中文数组
+    private String[] mTabs;
+    // mTabs数组对应的拼音
+    private String[] mTabsCN;
+    // 文字与拼音对应的map
+    private Map titleMap = new HashMap<String, String>();
 
     @Override
     public void onCreate() {
@@ -44,10 +54,25 @@ public class BaseApplication extends Application {
         BmobSMS.initialize(this, Bmob_Application_Id);
         // 初始化Bugly
         CrashReport.initCrashReport(getApplicationContext(), Constants.BUGLY_APP_ID, true);
+        // 获取全部的新闻Tab字符串
+        mTabs = getResources().getStringArray(R.array.tab_titles);
+        // tab标题对应的拼音（获取新闻内容要用）
+        mTabsCN = getResources().getStringArray(R.array.tab_CN_titles);
+        for (int i = 0; i < mTabs.length; i++) {
+            titleMap.put(mTabs[i], mTabsCN[i]);
+        }
     }
 
     public static synchronized BaseApplication getInstance() {
         return instance;
+    }
+
+    public String[] getmTabs() {
+        return mTabs;
+    }
+
+    public Map<String, String> getTitleMap() {
+        return titleMap;
     }
 
     public RequestQueue getRequestQueue() {
@@ -87,7 +112,7 @@ public class BaseApplication extends Application {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.d("xuqi", response.toString());
-                            ShareUtils.putString(mContext,newsType,response.toString());
+                            ShareUtils.putString(mContext, newsType, response.toString());
                         }
                     }, new Response.ErrorListener() {
                 @Override

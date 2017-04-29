@@ -59,11 +59,19 @@ public class NewsTabRecyclerViewAdapter extends RecyclerView.Adapter<NewsTabView
     @Override
     public void onBindViewHolder(final NewsTabViewHolder holder, final int position) {
         if (mOnItemClickListener != null) {
-            holder.itemView.setOnClickListener(v -> mOnItemClickListener.onItemClick(holder.itemView, position));
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onItemClick(holder.itemView, position);
+                }
+            });
 
-            holder.itemView.setOnLongClickListener(v -> {
-                mOnItemClickListener.onItemLongClick(holder.itemView, position);
-                return true;
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mOnItemClickListener.onItemLongClick(holder.itemView, position);
+                    return true;
+                }
             });
         }
 

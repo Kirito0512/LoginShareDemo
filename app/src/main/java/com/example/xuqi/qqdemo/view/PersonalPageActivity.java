@@ -118,7 +118,12 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
         // 加载menu样式
         toolBar.inflateMenu(R.menu.personal_menu);
         // 设置Toolbar返回键
-        toolBar.setNavigationOnClickListener(v -> showActivity(MainActivity.class));
+        toolBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showActivity(MainActivity.class);
+            }
+        });
         // 设置toolbar扩展栏的点击事件
         toolBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -37,16 +38,24 @@ public class NewsContentActivity extends BaseActivity {
 
         tlNewsContent.inflateMenu(R.menu.news_content_menu);
         // 返回键点击
-        tlNewsContent.setNavigationOnClickListener(v -> finish());
-        // 菜单栏点击
-        tlNewsContent.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.newscon_nav_fav:
-                    break;
-                case R.id.newscon_day_night:
-                    break;
+        tlNewsContent.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
-            return true;
+        });
+        // 菜单栏点击
+        tlNewsContent.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.newscon_nav_fav:
+                        break;
+                    case R.id.newscon_day_night:
+                        break;
+                }
+                return true;
+            }
         });
 
 

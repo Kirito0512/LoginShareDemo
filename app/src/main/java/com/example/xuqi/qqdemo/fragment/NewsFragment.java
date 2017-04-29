@@ -1,5 +1,6 @@
 package com.example.xuqi.qqdemo.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.adapter.MyRecyclerViewAdapter;
@@ -24,10 +28,13 @@ import com.example.xuqi.qqdemo.util.L;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
 import com.example.xuqi.qqdemo.view.NewsContentActivity;
 import com.example.xuqi.qqdemo.widget.RVDividerItemDecoration;
+
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Random;
+
 import static android.content.ContentValues.TAG;
 import static com.example.xuqi.qqdemo.Constants.NEWS_API_ADDRESS;
 import static com.example.xuqi.qqdemo.Constants.NEWS_APP_KEY;
@@ -134,17 +141,20 @@ public class NewsFragment extends BaseNewsFragment {
                         subNewsList = newsList.subList(0, 10);
                     }
 
-                    new Handler().postDelayed(() -> {
-                        Log.d(TAG, "run: 上拉刷新");
-                        // 子item不足10个，说明也是最后几个item了
-                        if (subNewsList.size() < 10) {
-                            mRecyclerViewAdapter.addMoreItem(subNewsList);
-                            subNewsList.clear();
-                        } else {
-                            mRecyclerViewAdapter.addMoreItem(subNewsList);
-                            // 隐藏上拉刷新item
-                            mRecyclerViewAdapter.setMoreStatus(2);
-                            subNewsList.clear();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "run: 上拉刷新");
+                            // 子item不足10个，说明也是最后几个item了
+                            if (subNewsList.size() < 10) {
+                                mRecyclerViewAdapter.addMoreItem(subNewsList);
+                                subNewsList.clear();
+                            } else {
+                                mRecyclerViewAdapter.addMoreItem(subNewsList);
+                                // 隐藏上拉刷新item
+                                mRecyclerViewAdapter.setMoreStatus(2);
+                                subNewsList.clear();
+                            }
                         }
                     }, 1000);
                 }
@@ -172,9 +182,12 @@ public class NewsFragment extends BaseNewsFragment {
     @Override
     public void onRefresh() {
         // 刷新时模拟数据的变化
-        new Handler().postDelayed(() -> {
-            mSwipeRefreshLayout.setRefreshing(false);
-            new Thread(new PullDownRefreshThread()).start();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                new Thread(new PullDownRefreshThread()).start();
+            }
         }, 1000);
     }
 
@@ -212,18 +225,26 @@ public class NewsFragment extends BaseNewsFragment {
         if (!TextUtils.isEmpty(newsType)) {
             L.d(NEWS_API_ADDRESS + newsType + NEWS_APP_KEY);
             jsonObjectRequest = new JsonObjectRequest(NEWS_API_ADDRESS + newsType + NEWS_APP_KEY, null,
-                    response -> {
-                        Log.d("xuqi", response.toString());
-                        try {
-                            List<NewsInfo> newsList = GsonData.parseJSONToList(response.toString());
-                            Message msg = new Message();
-                            msg.what = MyHandler.REQUEST_NEWS_LIST;
-                            msg.obj = newsList;
-                            handler.sendMessage(msg);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            Log.d("xuqi", jsonObject.toString());
+                            try {
+                                List<NewsInfo> newsList = GsonData.parseJSONToList(jsonObject.toString());
+                                Message msg = new Message();
+                                msg.what = MyHandler.REQUEST_NEWS_LIST;
+                                msg.obj = newsList;
+                                handler.sendMessage(msg);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }, error -> Log.e("xuqi", error.getMessage(), error));
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.e("xuqi", volleyError.getMessage(), volleyError);
+                }
+            });
         }
         return jsonObjectRequest;
     }
@@ -250,10 +271,6 @@ public class NewsFragment extends BaseNewsFragment {
                         newsList.addAll(mRecyclerViewAdapter.getListItem());
                     mRecyclerViewAdapter.deleteAllItem();
 
-                    Random random = new Random();
-                    newsList.get(0).setTitle("test" + random.nextInt(10));
-                    newsList.get(1).setTitle("test" + random.nextInt(10));
-                    newsList.get(2).setTitle("test" + random.nextInt(10));
                     // 先把第一页内容添加进去
                     subNewsList = newsList.subList(0, 10);
                     mRecyclerViewAdapter.addMoreItem(subNewsList);
@@ -290,13 +307,16 @@ public class NewsFragment extends BaseNewsFragment {
 
     public void showAlertDialog(final int position) {
         new AlertDialog.Builder(getActivity()).setTitle("列表框")
-                .setItems(getResources().getStringArray(R.array.choose_log_click), (dialog, which) -> {
-                    if (which == 0) {
-                        SnackbarUtil.show(getView(), "收藏", 0);
-                    } else if (which == 1) {
-                        mRecyclerViewAdapter.deleteItem(position);
+                .setItems(getResources().getStringArray(R.array.choose_log_click), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            SnackbarUtil.show(getView(), "收藏", 0);
+                        } else if (which == 1) {
+                            mRecyclerViewAdapter.deleteItem(position);
+                        }
+                        dialog.dismiss();
                     }
-                    dialog.dismiss();
                 }).show();
     }
 }

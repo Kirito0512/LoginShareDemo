@@ -1,11 +1,16 @@
 package com.example.xuqi.qqdemo.view;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.Sinaapi.Util;
+import com.example.xuqi.qqdemo.application.BaseApplication;
 import com.example.xuqi.qqdemo.bean.NewsUser;
 import com.example.xuqi.qqdemo.util.L;
 import com.example.xuqi.qqdemo.util.Platform;
@@ -48,11 +54,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private String type = "";
     public static TencentPlatform mTencentPlatform;
     public static SinaWeiboPlatform mSinaWeiboPlatform;
-    private MyLoadingDialog mProgressDialog;
     private EditText et_phone, et_vercode;
     private TextView tv_send;
     private Button btn_login;
     private com.example.xuqi.qqdemo.view.LoadingDialog dialog;
+
+    private String ph_number;
+    private String ph_vercode;
+    public static final int REQUEST_CODE_READ_PHONE_STATE = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +77,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         Sinabutton = (TextView) findViewById(R.id.Sina_login_button);
         QQbutton.setOnClickListener(this);
         Sinabutton.setOnClickListener(this);
-        mProgressDialog = new MyLoadingDialog(LoginActivity.this);
         et_phone = (EditText) findViewById(R.id.register_login_phone_et);
         et_vercode = (EditText) findViewById(R.id.register_login_vercode_et);
         tv_send = (TextView) findViewById(R.id.request_vercode);
@@ -93,10 +101,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
+    // 点击发送短信需要READ_PHONE_STATE权限，这里是回调
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_READ_PHONE_STATE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    requestMessage(ph_number);
+                } else {
+                    // Permission Denied
+                    showToast("CALL_PHONE Denied");
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
     @Override
     public void onClick(View view) {
-        final String ph_number = et_phone.getText().toString();
-        final String ph_vercode = et_vercode.getText().toString();
+        ph_number = et_phone.getText().toString();
+        ph_vercode = et_vercode.getText().toString();
         switch (view.getId()) {
             case R.id.QQ_login_button:
                 type = "QQ";
@@ -112,40 +138,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 if (ph_number == null && ph_number.length() != 11) {
                     SnackbarUtil.show(view, "请输入手机号", 0);
                 } else {
-                    L.d("电话号码正确");
-                    //进行获取验证码和倒计时1分钟操作
-                    // "SmsDemo"为短信模版名称
-                    BmobSMS.requestSMSCode(this, ph_number, "SmsDemo", new RequestSMSCodeListener() {
-                        @Override
-                        public void done(Integer integer, BmobException e) {
-                            if (e == null) {
-                                // 发送成功时，让获取验证码按钮不可点击，且为灰色
-                                tv_send.setClickable(false);
-//                                tv_send.setBackgroundColor(Color.GRAY);
-                                tv_send.setTextColor(Color.GRAY);
-                                Toast.makeText(LoginActivity.this, "验证码发送成功，请尽快使用", Toast.LENGTH_SHORT).show();
-                                /**
-                                 * 倒计时一分钟的操作
-                                 *
-                                 */
-                                new CountDownTimer(6000, 1000) {
-                                    @Override
-                                    public void onTick(long millisUntilFinished) {
-                                        tv_send.setText(millisUntilFinished / 1000 + "秒");
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        tv_send.setClickable(true);
-                                        tv_send.setText("重新发送");
-                                    }
-                                }.start();
-                            } else {
-                                L.d("xuqi  " + e.toString());
-                                Toast.makeText(LoginActivity.this, "验证码发送失败", Toast.LENGTH_SHORT).show();
-                            }
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        int checkCallPhonePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+                        if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
+                            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_PHONE_STATE},REQUEST_CODE_READ_PHONE_STATE);
+                            return;
+                        }else{
+                            //上面已经写好的拨号方法
+                            requestMessage(ph_number);
                         }
-                    });
+                    } else {
+                        //上面已经写好的拨号方法
+                        requestMessage(ph_number);
+                    }
+//                    requestMessage(ph_number);
                 }
                 break;
             case R.id.register_login_phone_btn:
@@ -167,6 +173,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                     user.setMobilePhoneNumber(ph_number);
                                     user.setUsername("董小姐" + ph_number);
                                     user.setPassword("666666");
+                                    user.setmTabs(BaseApplication.getInstance().getmTabs());
                                     // true表示性别男
                                     user.setSex(true);
                                     user.setEmail("kirito0512@qq.com");
@@ -213,6 +220,43 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             default:
                 break;
         }
+    }
+
+    private void requestMessage(String ph_number) {
+        L.d("电话号码正确");
+        //进行获取验证码和倒计时1分钟操作
+        // "SmsDemo"为短信模版名称
+        BmobSMS.requestSMSCode(this, ph_number, "SmsDemo", new RequestSMSCodeListener() {
+            @Override
+            public void done(Integer integer, BmobException e) {
+                if (e == null) {
+                    // 发送成功时，让获取验证码按钮不可点击，且为灰色
+                    tv_send.setClickable(false);
+//                                tv_send.setBackgroundColor(Color.GRAY);
+                    tv_send.setTextColor(Color.GRAY);
+                    Toast.makeText(LoginActivity.this, "验证码发送成功，请尽快使用", Toast.LENGTH_SHORT).show();
+                    /**
+                     * 倒计时一分钟的操作
+                     *
+                     */
+                    new CountDownTimer(6000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            tv_send.setText(millisUntilFinished / 1000 + "秒");
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            tv_send.setClickable(true);
+                            tv_send.setText("重新发送");
+                        }
+                    }.start();
+                } else {
+                    L.d("xuqi  " + e.toString());
+                    Toast.makeText(LoginActivity.this, "验证码发送失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     public void registeToWx() {

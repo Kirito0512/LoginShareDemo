@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    ViewPager滚动时已经将滚动事件通知到了AppBarLayout，
-    app;layout_scrollFlags可以实现对滚动事件的响应
-    scroll表示当ViewPager向上滚动的时候，ToolBar会向上滚动并实现隐藏
-    enterAlways表示当ViewPager向下滚动的时候，ToolBar会跟着一起向下滚动并重新显示
-    snap表示当ToolBar还没有完全隐藏或显示的时候，会根据当前滚动的距离，自动选择隐藏还是显示
+    <!--ViewPager滚动时已经将滚动事件通知到了AppBarLayout，-->
+    <!--app;layout_scrollFlags可以实现对滚动事件的响应-->
+    <!--scroll表示当ViewPager向上滚动的时候，ToolBar会向上滚动并实现隐藏-->
+    <!--enterAlways表示当ViewPager向下滚动的时候，ToolBar会跟着一起向下滚动并重新显示-->
+    <!--snap表示当ToolBar还没有完全隐藏或显示的时候，会根据当前滚动的距离，自动选择隐藏还是显示-->
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -52,9 +52,9 @@
 
                 <ImageView
                     android:id="@+id/iv_add_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:scaleType="center"
                     android:src="@drawable/ic_add_black_24dp" />
 
             </LinearLayout>
@@ -72,7 +72,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
 
         <!--悬浮按钮-->
         <android.support.design.widget.FloatingActionButton

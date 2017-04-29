@@ -3,7 +3,7 @@ package com.example.xuqi.qqdemo.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,9 +23,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.adapter.MyViewPagerAdapter;
+import com.example.xuqi.qqdemo.application.BaseApplication;
 import com.example.xuqi.qqdemo.bean.NewsUser;
 import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.example.xuqi.qqdemo.fragment.NewsFragment;
+import com.example.xuqi.qqdemo.util.L;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
 import com.example.xuqi.qqdemo.util.UserSessionManager;
 
@@ -33,14 +36,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 
 
-public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
+public class MainActivity extends BaseActivity {
     private DrawerLayout mDrawerLayout;
-    private CoordinatorLayout mCoodinatorLayout;
     private TextView name, mail;
     private CircleImageView icon;
     private ViewPager mViewPager;
@@ -50,6 +54,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     private String[] mTitles;
     // tab标题的对应newsType
     private String[] mTitlesCN;
+    // 文字与拼音对应的map
+    private Map titleMap = new HashMap<String, String>();
     // 填充到ViewPager中的Fragment
     private List<Fragment> mFragments;
     // ViewPager的数据适配器
@@ -64,7 +70,12 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//        mTitles = BaseApplication.getInstance().getmTabs();
+//        // tab标题对应的拼音（获取新闻内容要用）
+//        mTitlesCN = getResources().getStringArray(R.array.tab_CN_titles);
+//        for (int i = 0; i < mTitles.length; i++) {
+//            titleMap.put(mTitles[i], mTitlesCN[i]);
+//        }
         initViewPagerData();
 
         initViews();
@@ -72,70 +83,114 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     }
 
     private void initViewPagerData() {
-        Map titleMap = new HashMap<String, String>();
-        // Tab的标题采用string-array的方法保存，在res/values/arrays.xml中写
-        mTitles = getResources().getStringArray(R.array.tab_titles);
-        // tab标题对应的拼音（获取新闻内容要用）
-        mTitlesCN = getResources().getStringArray(R.array.tab_CN_titles);
-        for (int i = 0; i < mTitles.length; i++) {
-            titleMap.put(mTitles[i], mTitlesCN[i]);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            // 从拖拽修改Tabs的Activity跳转回来，获取新的关注Tabs List
+            List mTitleList = bundle.getStringArrayList("changeTab");
+            mTitles = new String[mTitleList.size()];
+            mTitleList.toArray(mTitles);
+            L.d("从Drag跳转 " + mTitleList.toString());
+            L.d("从Drag跳转 " + mTitles.toString());
+
+            // 保存到Bmob中
+            NewsUser newUser = new NewsUser();
+            newUser.setmTabs(mTitles);
+            NewsUser currentUser = NewsUser.getCurrentUser(NewsUser.class);
+            newUser.update(currentUser.getObjectId(), new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+                    if (e == null) {
+                        showToast("更新用户信息成功");
+                    } else {
+                        showToast("更新用户信息失败:" + e.getMessage());
+                    }
+                }
+            });
+        } else {
+//            titleMap = new HashMap<String, String>();
+//            // Tab的标题采用string-array的方法保存，在res/values/arrays.xml中写
+//            mTitles = getResources().getStringArray(R.array.tab_titles);
+//            // tab标题对应的拼音（获取新闻内容要用）
+//            mTitlesCN = getResources().getStringArray(R.array.tab_CN_titles);
+//            for (int i = 0; i < mTitles.length; i++) {
+//                titleMap.put(mTitles[i], mTitlesCN[i]);
+//            }
+            if (NewsUser.getCurrentUser() != null)
+                mTitles = NewsUser.getCurrentUser(NewsUser.class).getmTabs();
+            else
+                mTitles = BaseApplication.getInstance().getmTabs();
         }
+
         //初始化填充到ViewPager中的Fragment集合
         mFragments = new ArrayList<>();
         for (int i = 0; i < mTitles.length; i++) {
-            Bundle mBundle = new Bundle();
-            mBundle.putInt("flag", i);
+//            Bundle mBundle = new Bundle();
+//            mBundle.putInt("flag", i);
 //            MyFragment mFragment = new MyFragment();
 //            mFragment.setArguments(mBundle);
 //            mFragments.add(i, mFragment);
-            String title = (String) titleMap.get(mTitles[i]);
+            String title = BaseApplication.getInstance().getTitleMap().get(mTitles[i]);
             NewsFragment mFragment = new NewsFragment().newInstance(title);
             mFragments.add(i, mFragment);
         }
     }
 
     private void initViews() {
-
-        mCoodinatorLayout = (CoordinatorLayout) findViewById(R.id.id_coordinatorlayout);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mTabLayout = (TabLayout) findViewById(R.id.id_tablayout);
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
         mImageViewAddTab = (ImageView) findViewById(R.id.iv_add_title);
         // 将当前用户关注的新闻Title传递保存到Bundle中
-        Bundle bundle = new Bundle();
+        final Bundle bundle = new Bundle();
         bundle.putStringArray("title", mTitles);
         // 加号的点击事件，跳转到修改新闻关注栏目修改Activity
-        mImageViewAddTab.setOnClickListener(v -> showActivity(DragViewPagerTitleActivity.class, bundle));
+        mImageViewAddTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showActivity(DragViewPagerTitleActivity.class, bundle);
+            }
+        });
         // 为ToolBar设置导航按键
         // 初始化Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        toolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(GravityCompat.START));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
 
         // 悬浮按钮初始化&点击事件
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(v -> {
-            // SnackBar可以允许用户对当前情况进行简单的处理
-            SnackbarUtil.show(v, "Data deleted", Snackbar.LENGTH_SHORT);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // SnackBar可以允许用户对当前情况进行简单的处理
+                SnackbarUtil.show(v, "Data deleted", Snackbar.LENGTH_SHORT);
+            }
         });
 
         // 导航页NavigationView初始化&点击事件
         final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         // 将navigationview默认选中这一项
 //        navView.setCheckedItem(R.id.nav_fav);
-        navView.setNavigationItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                // 设置按钮
-                case R.id.nav_set:
-                    showActivity(PersonalSettingActivity.class);
-                    break;
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    // 设置按钮
+                    case R.id.nav_set:
+                        showActivity(PersonalSettingActivity.class);
+                        break;
 
-                // 设置反馈按钮
-                case R.id.nav_suggest:
-                    showActivity(NewsFeedBackActivity.class);
-                    break;
+                    // 设置反馈按钮
+                    case R.id.nav_suggest:
+                        showActivity(NewsFeedBackActivity.class);
+                        break;
+                }
+                mDrawerLayout.closeDrawers();
+                return true;
             }
-            mDrawerLayout.closeDrawers();
-            return true;
         });
 
         // 导入NavigationView的头部布局文件
@@ -144,12 +199,15 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         mail = (TextView) headerView.findViewById(R.id.mail);
         icon = (CircleImageView) headerView.findViewById(R.id.icon_image);
         // 导航页用户头像点击
-        icon.setOnClickListener(v -> {
-            if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
-                showActivity(PersonalPageActivity.class);
-            } else {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
+        icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
+                    showActivity(PersonalPageActivity.class);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -159,7 +217,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         // 设置ViewPager最大缓存的页面个数
         mViewPager.setOffscreenPageLimit(5);
         // 给ViewPager添加页面滑动动态监听器（为了让Toolbar中的Title可以变化相应的Tab的标题）
-        mViewPager.addOnPageChangeListener(this);
+//        mViewPager.addOnPageChangeListener(this);
 
         mTabLayout.setTabMode(MODE_SCROLLABLE);
         // 将TabLayout和ViewPager进行关联，让两者联动起来
@@ -174,14 +232,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     }
 
     private void processIntent() {
+        initViewPagerData();
+        initViews();
         checkIsLogin();
-    }
-
-    // 在onNewIntent之后触发
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        processIntent();
     }
 
     // 检查是否登录&更新信息
@@ -208,22 +261,22 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             icon.setImageResource(R.drawable.nav_icon);
         }
     }
-
-    // viewpager滑动监听的三个方法
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
+//
+//    // viewpager滑动监听的三个方法
+//    @Override
+//    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//    }
+//
+//    @Override
+//    public void onPageSelected(int position) {
+//
+//    }
+//
+//    @Override
+//    public void onPageScrollStateChanged(int state) {
+//
+//    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

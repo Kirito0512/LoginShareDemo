@@ -17,6 +17,9 @@ public class NewsUser extends BmobUser {
 
     private Boolean sex;
 
+    // 关注的新闻Tab
+    private String[] mTabs;
+
     public Boolean getSex() {
         return sex;
     }
@@ -41,4 +44,11 @@ public class NewsUser extends BmobUser {
         this.imageUrl = imageUrl;
     }
 
+    public String[] getmTabs() {
+        return mTabs;
+    }
+
+    public void setmTabs(String[] mTabs) {
+        this.mTabs = mTabs;
+    }
 }

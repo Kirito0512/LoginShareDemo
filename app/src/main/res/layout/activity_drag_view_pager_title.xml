@@ -18,6 +18,7 @@
         android:text="我的频道"/>
 
     <Button
+        android:id="@+id/bt_drag_tab"
         android:layout_toRightOf="@+id/tv_drag_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

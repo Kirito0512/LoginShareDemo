@@ -3,6 +3,8 @@ package com.example.xuqi.qqdemo.view;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 
 import com.example.xuqi.qqdemo.R;
@@ -35,40 +37,46 @@ public class NewsFeedBackActivity extends BaseActivity {
 
         // 加载menu样式
         tlFeedBack.inflateMenu(R.menu.personal_menu);
-        tlFeedBack.setNavigationOnClickListener(v -> {
-            showActivity(MainActivity.class);
+        tlFeedBack.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showActivity(MainActivity.class);
+            }
         });
 
-        tlFeedBack.setOnMenuItemClickListener(item -> {
-            // 获取用户填写的数据
-            String content = etMail.getText().toString();
-            String mail = etFeedBackContent.getText().toString();
-            if (item.getItemId() == R.id.edit) {
-                if (!TextUtils.isEmpty(mail) & !TextUtils.isEmpty(content)) {
-                    // 将用户反馈添加到Bmob后台服务器
-                    NewsUserFeedBack feed = new NewsUserFeedBack();
-                    NewsUser user = NewsUser.getCurrentUser(NewsUser.class);
-                    feed.setUsername(user.getUsername());
-                    feed.setMobilePhoneNumber(user.getMobilePhoneNumber());
-                    feed.setFeedBackContent(content);
-                    feed.setMail(mail);
-                    feed.save(new SaveListener<String>() {
-                        @Override
-                        public void done(String objectId, BmobException e) {
-                            if (e == null) {
-                                showToast(getResources().getString(R.string.feedbackok));
-                                // 跳转回MainActivity
-                                showActivity(MainActivity.class);
-                            } else {
-                                showToast("创建数据失败：" + e.getMessage());
+        tlFeedBack.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // 获取用户填写的数据
+                String content = etMail.getText().toString();
+                String mail = etFeedBackContent.getText().toString();
+                if (item.getItemId() == R.id.edit) {
+                    if (!TextUtils.isEmpty(mail) & !TextUtils.isEmpty(content)) {
+                        // 将用户反馈添加到Bmob后台服务器
+                        NewsUserFeedBack feed = new NewsUserFeedBack();
+                        NewsUser user = NewsUser.getCurrentUser(NewsUser.class);
+                        feed.setUsername(user.getUsername());
+                        feed.setMobilePhoneNumber(user.getMobilePhoneNumber());
+                        feed.setFeedBackContent(content);
+                        feed.setMail(mail);
+                        feed.save(new SaveListener<String>() {
+                            @Override
+                            public void done(String objectId, BmobException e) {
+                                if (e == null) {
+                                    showToast(getResources().getString(R.string.feedbackok));
+                                    // 跳转回MainActivity
+                                    showActivity(MainActivity.class);
+                                } else {
+                                    showToast("创建数据失败：" + e.getMessage());
+                                }
                             }
-                        }
-                    });
-                } else {
-                    showToast("内容不能为空");
+                        });
+                    } else {
+                        showToast("内容不能为空");
+                    }
                 }
+                return true;
             }
-            return true;
         });
 
     }
