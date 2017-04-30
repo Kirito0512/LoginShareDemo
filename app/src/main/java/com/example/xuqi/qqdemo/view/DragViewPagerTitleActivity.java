@@ -51,7 +51,6 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
         public boolean onMove(int srcPosition, int targetPosition) {
             if (mFollowList != null) {
                 mFollowList = changeListItemPosition(mFollowList, srcPosition, targetPosition);
-
 //                Collections.swap(mFollowList, srcPosition, targetPosition);
                 // 更新UI中的Item的位置，主要是给用户看到交互效果
                 mRecyclerViewAdapter.notifyItemMoved(srcPosition, targetPosition);
@@ -63,9 +62,13 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
 
     // 将List中src位置的数据，调整到target位置
     private List<String> changeListItemPosition(List<String> mFollowList, int srcPosition, int targetPosition) {
+        if (mFollowList == null || srcPosition < 0 || targetPosition < 0) {
+            return null;
+        }
         // 更换数据源中的数据Item的位置
         List<String> tempList = new ArrayList<>();
         if (srcPosition != targetPosition) {
+            // 源位置在目标位置后面
             if (srcPosition > targetPosition) {
                 for (int i = 0; i < targetPosition; i++) {
                     tempList.add(mFollowList.get(i));
@@ -78,10 +81,10 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
                     tempList.add(mFollowList.get(i));
                 }
             } else {
+                // 源位置在目标位置前面
                 for (int i = 0; i < srcPosition; i++) {
                     tempList.add(mFollowList.get(i));
                 }
-//                tempList.add(mFollowList.get(targetPosition));
                 for (int i = srcPosition + 1; i < targetPosition + 1; i++) {
                     tempList.add(mFollowList.get(i));
                 }
@@ -151,7 +154,7 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
         mRestRecyclerView = (RecyclerView) findViewById(R.id.rv_rest_title);
         mRestLayoutManager = new GridLayoutManager(this, 4, GridLayoutManager.VERTICAL, false);
         mRestRecyclerViewAdapter = new NewsTabRecyclerViewAdapter(this, mRestList);
-        // 为选择的Tab的recyclerview中的item点击事件
+        // 未选择的Tab的recyclerview中的item点击事件
         mRestRecyclerViewAdapter.setOnItemClickListener(new NewsTabRecyclerViewAdapter.OnItemClickListener() {
             // 点击Item操作
             @Override

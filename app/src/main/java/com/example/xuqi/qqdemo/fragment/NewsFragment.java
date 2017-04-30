@@ -267,8 +267,12 @@ public class NewsFragment extends BaseNewsFragment {
                     // 新获得的new data
                     newsList = (List<NewsInfo>) msg.obj;
                     // 新获得的news数据，后尾加上原有的数据,通过上拉刷新在一页一页加回到adapter中
-                    if (mRecyclerViewAdapter.getListItem() != null && mRecyclerViewAdapter.getListItem().size() > 0)
+                    if (mRecyclerViewAdapter.getListItem() != null && mRecyclerViewAdapter.getListItem().size() > 0){
+                        // 求新list与原有的list的差集，即只保留新数据
+                        newsList.removeAll(mRecyclerViewAdapter.getListItem());
+                        // 新数据与老数据合并
                         newsList.addAll(mRecyclerViewAdapter.getListItem());
+                    }
                     mRecyclerViewAdapter.deleteAllItem();
 
                     // 先把第一页内容添加进去
