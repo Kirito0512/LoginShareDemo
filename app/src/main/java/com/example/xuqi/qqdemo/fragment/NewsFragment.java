@@ -272,6 +272,7 @@ public class NewsFragment extends BaseNewsFragment {
                         newsList.removeAll(mRecyclerViewAdapter.getListItem());
                         // 新数据与老数据合并
                         newsList.addAll(mRecyclerViewAdapter.getListItem());
+                        L.d("haha");
                     }
                     mRecyclerViewAdapter.deleteAllItem();
 
@@ -290,13 +291,17 @@ public class NewsFragment extends BaseNewsFragment {
     @Override
     public void onItemClick(View view, int position) {
         // 获取点击的item的url
-        String newsUrl = mRecyclerViewAdapter.newsList.get(position).getUrl();
-        String newsTitle = mRecyclerViewAdapter.newsList.get(position).getAuthor_name();
+        NewsInfo newsInfo = mRecyclerViewAdapter.newsList.get(position);
+//        String newsUrl = mRecyclerViewAdapter.newsList.get(position).getUrl();
+//        String newsTitle = mRecyclerViewAdapter.newsList.get(position).getAuthor_name();
         // 将url放入intent
         Intent intent = new Intent(getActivity(), NewsContentActivity.class);
         // 将新闻url与author传递到NewsContentActivity
-        intent.putExtra("newsUrl", newsUrl);
-        intent.putExtra("newsTitle", newsTitle);
+//        intent.putExtra("newsUrl", newsUrl);
+//        intent.putExtra("newsTitle", newsTitle);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("newsInfo",newsInfo);
+        intent.putExtras(bundle);
         // 跳转到NewsContentActivity
         startActivity(intent);
         SnackbarUtil.show(mRecyclerView, getString(R.string.item_clicked), 0);

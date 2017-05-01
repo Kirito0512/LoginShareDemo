@@ -1,12 +1,22 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-        <item
-            android:id="@+id/newscon_nav_fav"
-            android:icon="@drawable/ic_favorite_border_black_24dp"
-            android:title="@string/collection"
-            android:showAsAction="always"/>
-        <item
-            android:id="@+id/newscon_day_night"
-            android:icon="@drawable/night"
-            android:title="@string/daynight"
-            android:showAsAction="never"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/newscon_nav_fav"
+        android:icon="@drawable/ic_favorite_border_black_24dp"
+        android:title="@string/collection"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/newscon_cancel_fav"
+        android:icon="@drawable/ic_favorite_black_24dp"
+        android:title="@string/cancel_collection"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/newscon_day_night"
+        android:icon="@drawable/night"
+        android:title="@string/daynight"
+        app:showAsAction="never" />
 </menu>
