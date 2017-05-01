@@ -1,16 +1,21 @@
 package com.example.xuqi.qqdemo.view;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -53,6 +58,7 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     public static final int CROP_REQUEST_CODE = 102;
     public String imgPath = "";
     LoadingDialog dialog;
+    public static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 103;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,8 +163,23 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
                 break;
 
             case R.id.personalpage_icon_image:
-                if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
-                    showTypeDialog();
+                // API23以上，请求读写内存权限
+                if (Build.VERSION.SDK_INT >= 23) {
+                    int checkCallPhonePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+                    if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_READ_EXTERNAL_STORAGE);
+                        return;
+                    } else {
+                        //上面已经写好的拨号方法
+                        if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
+                            showTypeDialog();
+                        }
+                    }
+                } else {
+                    //上面已经写好的拨号方法
+                    if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
+                        showTypeDialog();
+                    }
                 }
                 break;
         }
@@ -366,5 +387,25 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     public Uri getImageUri() {
         File temp = new File(Environment.getExternalStorageDirectory() + "/head.jpg");
         return Uri.fromFile(temp);
+    }
+
+    // 点击发送短信需要READ_PHONE_STATE权限，这里是回调
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_READ_EXTERNAL_STORAGE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    if (UserSessionManager.isAleadyLogin() || NewsUser.getCurrentUser(NewsUser.class) != null) {
+                        showTypeDialog();
+                    }
+                } else {
+                    // Permission Denied
+                    showToast("请赋予权限，否则无法使用");
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }

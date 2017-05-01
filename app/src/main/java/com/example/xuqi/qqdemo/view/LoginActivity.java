@@ -151,7 +151,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         //上面已经写好的拨号方法
                         requestMessage(ph_number);
                     }
-//                    requestMessage(ph_number);
                 }
                 break;
             case R.id.register_login_phone_btn:
