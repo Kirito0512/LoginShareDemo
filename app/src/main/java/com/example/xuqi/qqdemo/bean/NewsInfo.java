@@ -18,6 +18,22 @@ public class NewsInfo extends BmobObject {
     private String thumbnail_pic_s02;
     private String thumbnail_pic_s03;
 
+    public NewsInfo(String key, String title, String date, String name, String url, String pic0, String pic1, String pic2) {
+        this.uniquekey = key;
+        this.title = title;
+        this.date = date;
+        this.author_name = name;
+        this.url = url;
+        this.thumbnail_pic_s = pic0;
+        this.thumbnail_pic_s02 = pic1;
+        this.thumbnail_pic_s03 = pic2;
+    }
+
+    public NewsInfo() {
+
+    }
+
+
     public String getUniquekey() {
         return uniquekey;
     }

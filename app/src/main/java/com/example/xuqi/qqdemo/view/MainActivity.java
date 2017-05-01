@@ -187,6 +187,11 @@ public class MainActivity extends BaseActivity {
                     case R.id.nav_suggest:
                         showActivity(NewsFeedBackActivity.class);
                         break;
+
+                    // 设置收藏按钮
+                    case R.id.nav_fav:
+                        showActivity(FavNewsListActivity.class);
+                        break;
                 }
                 mDrawerLayout.closeDrawers();
                 return true;

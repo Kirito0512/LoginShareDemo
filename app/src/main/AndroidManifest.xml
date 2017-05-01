@@ -96,7 +96,8 @@
         <activity android:name=".view.ChangeBindPhoneActivity" />
         <activity android:name=".view.NewsContentActivity" />
         <activity android:name=".view.NewsFeedBackActivity" />
-        <activity android:name=".view.DragViewPagerTitleActivity"></activity>
+        <activity android:name=".view.DragViewPagerTitleActivity" />
+        <activity android:name=".view.FavNewsListActivity"></activity>
     </application>
 
 </manifest>
