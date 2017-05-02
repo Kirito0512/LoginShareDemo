@@ -27,7 +27,6 @@ import com.example.xuqi.qqdemo.application.BaseApplication;
 import com.example.xuqi.qqdemo.bean.NewsUser;
 import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.example.xuqi.qqdemo.fragment.NewsFragment;
-import com.example.xuqi.qqdemo.util.L;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
 import com.example.xuqi.qqdemo.util.UserSessionManager;
 
@@ -70,27 +69,19 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        mTitles = BaseApplication.getInstance().getmTabs();
-//        // tab标题对应的拼音（获取新闻内容要用）
-//        mTitlesCN = getResources().getStringArray(R.array.tab_CN_titles);
-//        for (int i = 0; i < mTitles.length; i++) {
-//            titleMap.put(mTitles[i], mTitlesCN[i]);
-//        }
         initViewPagerData();
-
         initViews();
         checkIsLogin();
     }
 
     private void initViewPagerData() {
+        // 若想getIntent获取正确，那么onNewIntent种需要setIntent
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             // 从拖拽修改Tabs的Activity跳转回来，获取新的关注Tabs List
             List mTitleList = bundle.getStringArrayList("changeTab");
             mTitles = new String[mTitleList.size()];
             mTitleList.toArray(mTitles);
-            L.d("从Drag跳转 " + mTitleList.toString());
-            L.d("从Drag跳转 " + mTitles.toString());
 
             // 保存到Bmob中
             NewsUser newUser = new NewsUser();
@@ -107,14 +98,6 @@ public class MainActivity extends BaseActivity {
                 }
             });
         } else {
-//            titleMap = new HashMap<String, String>();
-//            // Tab的标题采用string-array的方法保存，在res/values/arrays.xml中写
-//            mTitles = getResources().getStringArray(R.array.tab_titles);
-//            // tab标题对应的拼音（获取新闻内容要用）
-//            mTitlesCN = getResources().getStringArray(R.array.tab_CN_titles);
-//            for (int i = 0; i < mTitles.length; i++) {
-//                titleMap.put(mTitles[i], mTitlesCN[i]);
-//            }
             if (NewsUser.getCurrentUser() != null)
                 mTitles = NewsUser.getCurrentUser(NewsUser.class).getmTabs();
             else
@@ -124,11 +107,6 @@ public class MainActivity extends BaseActivity {
         //初始化填充到ViewPager中的Fragment集合
         mFragments = new ArrayList<>();
         for (int i = 0; i < mTitles.length; i++) {
-//            Bundle mBundle = new Bundle();
-//            mBundle.putInt("flag", i);
-//            MyFragment mFragment = new MyFragment();
-//            mFragment.setArguments(mBundle);
-//            mFragments.add(i, mFragment);
             String title = BaseApplication.getInstance().getTitleMap().get(mTitles[i]);
             NewsFragment mFragment = new NewsFragment().newInstance(title);
             mFragments.add(i, mFragment);
@@ -232,7 +210,13 @@ public class MainActivity extends BaseActivity {
     // SingleTask启动模式，从别的Activity通过showActivity跳转过来时触发
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        // 不使用setIntent，会使得getIntent出现问题
         setIntent(intent);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
         processIntent();
     }
 

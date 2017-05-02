@@ -42,6 +42,7 @@ public class FavNewsListActivity extends BaseActivity implements FavNewsRecycler
     private List<NewsInfo> mFavList = new ArrayList<>();
     private List<String> favNewsIdList = new ArrayList<>();
     private NewsUser currentUser;
+    private LoadingDialog dialog;
     private CustomItemTouchHelperCallback.OnItemTouchCallbackListener onItemTouchCallbackListener = new CustomItemTouchHelperCallback.OnItemTouchCallbackListener() {
         // 滑动Item
         @Override
@@ -88,6 +89,7 @@ public class FavNewsListActivity extends BaseActivity implements FavNewsRecycler
     }
 
     private void initViews() {
+        dialog = new LoadingDialog(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar_fav_news_list);
         mRecyclerView = (RecyclerView) findViewById(rv_fav_news_list);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -100,6 +102,7 @@ public class FavNewsListActivity extends BaseActivity implements FavNewsRecycler
         }
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mAdapter = new FavNewsRecyclerViewAdapter(this);
+        dialog.show();
         new requestDataThread().run();
 
         DefaultItemTouchHelper itemTouchHelper = new DefaultItemTouchHelper(onItemTouchCallbackListener);
@@ -150,16 +153,19 @@ public class FavNewsListActivity extends BaseActivity implements FavNewsRecycler
                         showToast("查询失败");
                         L.d("收藏" + e.toString());
                     }
+                    dialog.dismiss();
                 }
             });
         }
     }
 
-    public class deleteDataThread implements Runnable{
+    public class deleteDataThread implements Runnable {
         String objectId;
-        public deleteDataThread(String id){
+
+        public deleteDataThread(String id) {
             objectId = id;
         }
+
         @Override
         public void run() {
             FavoriteNews favNews = new FavoriteNews();
@@ -168,10 +174,10 @@ public class FavNewsListActivity extends BaseActivity implements FavNewsRecycler
 
                 @Override
                 public void done(BmobException e) {
-                    if(e==null){
+                    if (e == null) {
                         L.d("bmob删除成功");
-                    }else{
-                        L.d("bmob失败："+e.getMessage()+","+e.getErrorCode());
+                    } else {
+                        L.d("bmob失败：" + e.getMessage() + "," + e.getErrorCode());
                     }
                 }
             });

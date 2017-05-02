@@ -175,7 +175,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                     user.setmTabs(BaseApplication.getInstance().getmTabs());
                                     // true表示性别男
                                     user.setSex(true);
-                                    user.setEmail("kirito0512@qq.com");
                                     // Bmob一键注册&登录
                                     user.signOrLogin(ph_vercode, new SaveListener<NewsUser>() {
                                         @Override
