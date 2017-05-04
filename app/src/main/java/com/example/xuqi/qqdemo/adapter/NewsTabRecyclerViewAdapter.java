@@ -113,4 +113,9 @@ public class NewsTabRecyclerViewAdapter extends RecyclerView.Adapter<NewsTabView
     public List<String> getDatas() {
         return mDatas;
     }
+
+    public void setListItems(List<String> mList) {
+        if (mList != null)
+            mDatas = mList;
+    }
 }

@@ -53,6 +53,8 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
                 mFollowList = changeListItemPosition(mFollowList, srcPosition, targetPosition);
 //                Collections.swap(mFollowList, srcPosition, targetPosition);
                 // 更新UI中的Item的位置，主要是给用户看到交互效果
+                // 将更新后的mFollowList数据传递到adapter中，鬼知道为啥没自动更新
+                mRecyclerViewAdapter.setListItems(mFollowList);
                 mRecyclerViewAdapter.notifyItemMoved(srcPosition, targetPosition);
                 return true;
             }
@@ -196,7 +198,7 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
         switch (v.getId()) {
             case R.id.bt_drag_tab:
                 Bundle bundle = new Bundle();
-                bundle.putStringArrayList("changeTab", (ArrayList<String>) mFollowList);
+                bundle.putStringArrayList("changeTab", (ArrayList<String>) mRecyclerViewAdapter.getDatas());
                 showActivity(MainActivity.class, bundle);
                 break;
         }
