@@ -131,6 +131,10 @@ public class NewsContentActivity extends BaseActivity {
         }
         // If it wasn't the Back key or there's no web page history, bubble up to the default
         // system behavior (probably exit the activity)
+        // 跳转带上附加信息，在MainAcitivity中无需进行逻辑操作
+        Bundle bundle = new Bundle();
+        bundle.putString("isFrom", "NewContentActivity");
+        showActivity(MainActivity.class, bundle);
         return super.onKeyDown(keyCode, event);
     }
 
@@ -218,5 +222,4 @@ public class NewsContentActivity extends BaseActivity {
             });
         }
     }
-
 }
