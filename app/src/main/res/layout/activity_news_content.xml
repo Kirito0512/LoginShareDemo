@@ -17,6 +17,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimaryDark"
             app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:popupTheme="@style/ToolbarPopupTheme"
             app:navigationIcon="@drawable/ic_back_24dp">
 
             <TextView
