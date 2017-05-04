@@ -63,7 +63,10 @@ public class NewsContentActivity extends BaseActivity {
         tlNewsContent.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                // 跳转带上附加信息，在MainAcitivity中无需进行逻辑操作
+                Bundle bundle = new Bundle();
+                bundle.putString("isFrom", "NewContentActivity");
+                showActivity(MainActivity.class, bundle);
             }
         });
         // 菜单栏点击

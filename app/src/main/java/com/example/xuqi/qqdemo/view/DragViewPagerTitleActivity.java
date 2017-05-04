@@ -129,10 +129,13 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
             // item点击事件
             @Override
             public void onItemClick(View view, int position) {
+                mFollowList = mRecyclerViewAdapter.getDatas();
+                String deleteItem = mFollowList.get(position);
                 mRecyclerViewAdapter.deleteListItem(position);
-                mFollowList = mRecyclerViewAdapter.mDatas;
-                mRestList = removeList(mFollowList);
-                mRestRecyclerViewAdapter.addAfterdeleteAllItem(mRestList);
+//                mFollowList = mRecyclerViewAdapter.getDatas();
+//                mRestList = removeList(mFollowList);
+                mRestRecyclerViewAdapter.addItem(deleteItem);
+//                mRestRecyclerViewAdapter.addAfterdeleteAllItem(mRestList);
                 SnackbarUtil.show(view, "删除成功", 1);
             }
 
@@ -159,10 +162,13 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
             // 点击Item操作
             @Override
             public void onItemClick(View view, int position) {
+                mRestList = mRestRecyclerViewAdapter.getDatas();
+                String deleteItem = mRestList.get(position);
                 mRestRecyclerViewAdapter.deleteListItem(position);
-                mRestList = mRestRecyclerViewAdapter.mDatas;
-                mFollowList = removeList(mRestList);
-                mRecyclerViewAdapter.addAfterdeleteAllItem(mFollowList);
+//                mRestList = mRestRecyclerViewAdapter.getDatas();
+//                mFollowList = removeList(mRestList);
+//                mRecyclerViewAdapter.addAfterdeleteAllItem(mFollowList);
+                mRecyclerViewAdapter.addItem(deleteItem);
                 SnackbarUtil.show(view, "添加成功", 1);
             }
 

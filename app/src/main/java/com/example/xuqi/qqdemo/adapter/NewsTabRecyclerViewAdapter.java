@@ -33,7 +33,7 @@ public class NewsTabRecyclerViewAdapter extends RecyclerView.Adapter<NewsTabView
     }
 
     public Context mContext;
-    public List<String> mDatas;
+    private List<String> mDatas;
     public LayoutInflater mLayoutInflater;
 
     public NewsTabRecyclerViewAdapter(Context mContext, List<String> mList) {
@@ -100,5 +100,17 @@ public class NewsTabRecyclerViewAdapter extends RecyclerView.Adapter<NewsTabView
             mDatas.addAll(list);
             notifyDataSetChanged();
         }
+    }
+
+    // 添加一个tab
+    public void addItem(String item) {
+        if (item != null) {
+            mDatas.add(item);
+            notifyDataSetChanged();
+        }
+    }
+
+    public List<String> getDatas() {
+        return mDatas;
     }
 }

@@ -221,9 +221,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void processIntent() {
-        initViewPagerData();
-        initViews();
-        checkIsLogin();
+        // 不等于null时是从NewsContentActivity跳转来的，无需进行逻辑操作
+        if(getIntent().getExtras().getString("isFrom") == null){
+            initViewPagerData();
+            initViews();
+            checkIsLogin();
+        }
     }
 
     // 检查是否登录&更新信息
