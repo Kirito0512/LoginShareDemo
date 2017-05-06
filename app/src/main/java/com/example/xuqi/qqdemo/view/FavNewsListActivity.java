@@ -68,6 +68,11 @@ public class FavNewsListActivity extends BaseActivity implements FavNewsRecycler
 //            }
             return false;
         }
+
+        @Override
+        public void onSelectedChanged(int actionState) {
+
+        }
     };
 
     @Override

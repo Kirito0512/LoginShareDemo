@@ -136,6 +136,14 @@ public class CustomItemTouchHelperCallback extends ItemTouchHelper.Callback {
         }
     }
 
+    // TODO: 17/5/6
+    @Override
+    public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+        if (onItemTouchCallbackListener != null) {
+            onItemTouchCallbackListener.onSelectedChanged(actionState);
+        }
+    }
+
     public interface OnItemTouchCallbackListener {
         /**
          * 当某个Item被滑动删除的时候
@@ -152,5 +160,7 @@ public class CustomItemTouchHelperCallback extends ItemTouchHelper.Callback {
          * @return 开发者处理了操作应该返回true，开发者没有处理就返回false
          */
         boolean onMove(int srcPosition, int targetPosition);
+
+        void onSelectedChanged(int actionState);
     }
 }

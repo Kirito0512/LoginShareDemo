@@ -3,6 +3,7 @@ package com.example.xuqi.qqdemo.view;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,6 +16,7 @@ import com.example.xuqi.qqdemo.widget.DefaultItemTouchHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,6 +36,9 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
     List<String> mFollowList;
     // 删去已有Tab之后剩余的Tab
     List<String> mRestList;
+
+    private boolean isMove = false;
+
     // 实现拖拽效果的回调函数
     private CustomItemTouchHelperCallback.OnItemTouchCallbackListener onItemTouchCallbackListener = new CustomItemTouchHelperCallback.OnItemTouchCallbackListener() {
         // 滑动Item
@@ -49,18 +54,49 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
         // 拖拽Item
         @Override
         public boolean onMove(int srcPosition, int targetPosition) {
-            if (mFollowList != null) {
-                mFollowList = changeListItemPosition(mFollowList, srcPosition, targetPosition);
-//                Collections.swap(mFollowList, srcPosition, targetPosition);
-                // 更新UI中的Item的位置，主要是给用户看到交互效果
-                // 将更新后的mFollowList数据传递到adapter中，鬼知道为啥没自动更新
-                mRecyclerViewAdapter.setListItems(mFollowList);
-                mRecyclerViewAdapter.notifyItemMoved(srcPosition, targetPosition);
-                return true;
+            swapListItemPosition(mFollowList, srcPosition, targetPosition);
+            // 更新UI中的Item的位置，主要是给用户看到交互效果
+            mRecyclerViewAdapter.notifyItemMoved(srcPosition, targetPosition);
+            return true;
+        }
+
+        @Override
+        public void onSelectedChanged(int actionState) {
+            // A View is currently being dragged.
+            if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                //不是空闲状态
+                isMove = true;
             }
-            return false;
+            /**
+             * ItemTouchHelper is in idle state.
+             * At this state, either there is no related motion event by the user
+             * or latest motion events have not yet triggered a swipe or drag.
+             */
+            else if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
+                if (isMove){
+                    mRecyclerViewAdapter.notifyDataSetChanged();
+                    isMove = false;
+                }
+            }
         }
     };
+
+    // 将List中src位置的数据，调整到target位置
+    private void swapListItemPosition(List<String> mFollowList, int srcPosition, int targetPosition) {
+        if (mFollowList == null || srcPosition < 0 || targetPosition < 0) {
+            return;
+        } else {
+            if (srcPosition < targetPosition) {
+                for (int i = srcPosition; i < targetPosition; i++) {
+                    Collections.swap(mFollowList, i, i + 1);
+                }
+            } else {
+                for (int i = srcPosition; i > targetPosition; i--) {
+                    Collections.swap(mFollowList, i, i - 1);
+                }
+            }
+        }
+    }
 
     // 将List中src位置的数据，调整到target位置
     private List<String> changeListItemPosition(List<String> mFollowList, int srcPosition, int targetPosition) {
@@ -175,7 +211,7 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
             // 长按操作
             @Override
             public void onItemLongClick(View view, int position) {
-
+                return;
             }
         });
         mRestRecyclerView.setAdapter(mRestRecyclerViewAdapter);
