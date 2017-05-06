@@ -125,7 +125,10 @@ public class MainActivity extends BaseActivity {
         mImageViewAddTab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showActivity(DragViewPagerTitleActivity.class, bundle);
+                if (NewsUser.getCurrentUser() != null)
+                    showActivity(DragViewPagerTitleActivity.class, bundle);
+                else
+                    showActivity(LoginActivity.class);
             }
         });
         // 为ToolBar设置导航按键
@@ -222,10 +225,12 @@ public class MainActivity extends BaseActivity {
 
     private void processIntent() {
         // 不等于null时是从NewsContentActivity跳转来的，无需进行逻辑操作
-        if(getIntent().getExtras().getString("isFrom") == null){
+        if (getIntent().getExtras() == null) {
             initViewPagerData();
             initViews();
             checkIsLogin();
+        } else if (getIntent().getExtras().getString("isFrom").equals("NewContentActivity")) {
+
         }
     }
 
