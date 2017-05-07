@@ -59,18 +59,16 @@ public class FavNewsListActivity extends BaseActivity implements FavNewsRecycler
         // 拖拽Item
         @Override
         public boolean onMove(int srcPosition, int targetPosition) {
-//            if (mFavList != null) {
-//                mFavList = changeListItemPosition(mFollowList, srcPosition, targetPosition);
-////                Collections.swap(mFollowList, srcPosition, targetPosition);
-//                // 更新UI中的Item的位置，主要是给用户看到交互效果
-//                mAdapter.notifyItemMoved(srcPosition, targetPosition);
-//                return true;
-//            }
             return false;
         }
 
         @Override
-        public void onSelectedChanged(int actionState) {
+        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+
+        }
+
+        @Override
+        public void clearView(RecyclerView.ViewHolder viewHolder) {
 
         }
     };

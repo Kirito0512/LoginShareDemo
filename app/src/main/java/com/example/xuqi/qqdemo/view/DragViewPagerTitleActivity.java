@@ -1,5 +1,6 @@
 package com.example.xuqi.qqdemo.view;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.xuqi.qqdemo.R;
+import com.example.xuqi.qqdemo.ViewHolder.NewsTabViewHolder;
 import com.example.xuqi.qqdemo.adapter.NewsTabRecyclerViewAdapter;
 import com.example.xuqi.qqdemo.application.BaseApplication;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
@@ -61,11 +63,20 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
         }
 
         @Override
-        public void onSelectedChanged(int actionState) {
+        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+            /**
+             * 一个Item拖拽的过程中，只会经历两个状态
+             * 1. 长按选中拖动的过程中，actionState为ACTION_STATE_DRAG
+             * 2. 手指释放，actionState为ACTION_STATE_IDLE
+             */
+
             // A View is currently being dragged.
             if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-                //不是空闲状态
+                // 不是空闲状态
                 isMove = true;
+                // 设置选中的item的背景色
+                NewsTabViewHolder mNewsTabViewHolder = (NewsTabViewHolder) viewHolder;
+                mNewsTabViewHolder.tvNewsTab.setBackgroundColor(Color.LTGRAY);
             }
             /**
              * ItemTouchHelper is in idle state.
@@ -73,11 +84,20 @@ public class DragViewPagerTitleActivity extends BaseActivity implements View.OnC
              * or latest motion events have not yet triggered a swipe or drag.
              */
             else if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
-                if (isMove){
+                if (isMove) {
+                    // 重点，拖拽后手指释放，notifyDataSetChanged会让适配器里的数据重新bind
+                    // 解决了拖拽移动项目后，position位置不正确的bug
                     mRecyclerViewAdapter.notifyDataSetChanged();
                     isMove = false;
                 }
             }
+        }
+
+        @Override
+        public void clearView(RecyclerView.ViewHolder viewHolder) {
+            // 将选中的item的背景色恢复
+            NewsTabViewHolder mNewsTabViewHolder = (NewsTabViewHolder) viewHolder;
+            mNewsTabViewHolder.tvNewsTab.setBackground(getResources().getDrawable(R.drawable.news_tab));
         }
     };
 

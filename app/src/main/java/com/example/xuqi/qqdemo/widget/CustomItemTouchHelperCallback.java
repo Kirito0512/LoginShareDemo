@@ -140,8 +140,16 @@ public class CustomItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         if (onItemTouchCallbackListener != null) {
-            onItemTouchCallbackListener.onSelectedChanged(actionState);
+            onItemTouchCallbackListener.onSelectedChanged(viewHolder, actionState);
         }
+    }
+
+    @Override
+    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        if (onItemTouchCallbackListener != null) {
+            onItemTouchCallbackListener.clearView(viewHolder);
+        }
+        super.clearView(recyclerView, viewHolder);
     }
 
     public interface OnItemTouchCallbackListener {
@@ -161,6 +169,8 @@ public class CustomItemTouchHelperCallback extends ItemTouchHelper.Callback {
          */
         boolean onMove(int srcPosition, int targetPosition);
 
-        void onSelectedChanged(int actionState);
+        void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState);
+
+        void clearView(RecyclerView.ViewHolder viewHolder);
     }
 }
