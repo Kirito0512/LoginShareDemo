@@ -18,15 +18,15 @@
     <RelativeLayout
         android:id="@+id/rl_personal_info"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="180dp"
         android:layout_below="@+id/toolbar_personal_info"
-        android:background="@color/colorPrimaryDark">
-
+        android:background="@drawable/headview_background">
+        <!--@color/colorPrimaryDark-->
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/personalpage_icon_image"
             android:layout_width="96dp"
             android:layout_height="96dp"
-            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
             android:src="@drawable/nav_icon" />
 
         <TextView

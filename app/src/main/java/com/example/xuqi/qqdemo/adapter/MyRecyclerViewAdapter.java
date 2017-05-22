@@ -199,12 +199,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        // 将最后一个Item设置为footView
-//        if (position + 1 == getItemCount()) {
-//            return TYPE_FOOTER;
-//        } else {
-//            return TYPE_ITEM;
-//        }
         L.d("itemCount = " + getItemCount());
         // 刚打开APP，还未加载上数据时显示的进度条
         if (getItemCount() == 1) {

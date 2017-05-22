@@ -24,10 +24,12 @@ import java.util.Map;
 
 import cn.bmob.sms.BmobSMS;
 import cn.bmob.v3.Bmob;
+import cn.sharesdk.framework.ShareSDK;
 
 import static com.example.xuqi.qqdemo.Constants.Bmob_Application_Id;
 import static com.example.xuqi.qqdemo.Constants.NEWS_API_ADDRESS;
 import static com.example.xuqi.qqdemo.Constants.NEWS_APP_KEY;
+import static com.example.xuqi.qqdemo.Constants.ShareSDK_Id;
 
 /**
  * Created by xuqi on 17/3/22.
@@ -54,6 +56,8 @@ public class BaseApplication extends Application {
         BmobSMS.initialize(this, Bmob_Application_Id);
         // 初始化Bugly
         CrashReport.initCrashReport(getApplicationContext(), Constants.BUGLY_APP_ID, true);
+        // 初始化ShareSDK
+        ShareSDK.initSDK(this,ShareSDK_Id);
         // 获取全部的新闻Tab字符串
         mTabs = getResources().getStringArray(R.array.tab_titles);
         // tab标题对应的拼音（获取新闻内容要用）

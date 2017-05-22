@@ -15,8 +15,8 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/newscon_day_night"
-        android:icon="@drawable/night"
-        android:title="@string/daynight"
-        app:showAsAction="never" />
+        android:id="@+id/newscon_share"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:title="@string/share"
+        app:showAsAction="always" />
 </menu>

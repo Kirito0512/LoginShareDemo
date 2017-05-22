@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tv_drag_title"
         android:layout_marginLeft="210dp"
-        android:text="编辑" />
+        android:text="完成" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_drag_title"
