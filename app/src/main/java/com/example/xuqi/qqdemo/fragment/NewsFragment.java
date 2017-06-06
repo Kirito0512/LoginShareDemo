@@ -22,7 +22,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xuqi.qqdemo.R;
 import com.example.xuqi.qqdemo.adapter.MyRecyclerViewAdapter;
 import com.example.xuqi.qqdemo.application.BaseApplication;
+import com.example.xuqi.qqdemo.bean.HistoryNews;
 import com.example.xuqi.qqdemo.bean.NewsInfo;
+import com.example.xuqi.qqdemo.bean.NewsUser;
 import com.example.xuqi.qqdemo.netdata.GsonData;
 import com.example.xuqi.qqdemo.util.L;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
@@ -34,6 +36,9 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 
 import static android.content.ContentValues.TAG;
 import static com.example.xuqi.qqdemo.Constants.NEWS_API_ADDRESS;
@@ -292,18 +297,20 @@ public class NewsFragment extends BaseNewsFragment {
     public void onItemClick(View view, int position) {
         // 获取点击的item的url
         NewsInfo newsInfo = mRecyclerViewAdapter.newsList.get(position);
-//        String newsUrl = mRecyclerViewAdapter.newsList.get(position).getUrl();
-//        String newsTitle = mRecyclerViewAdapter.newsList.get(position).getAuthor_name();
         // 将url放入intent
         Intent intent = new Intent(getActivity(), NewsContentActivity.class);
         // 将新闻url与author传递到NewsContentActivity
-//        intent.putExtra("newsUrl", newsUrl);
-//        intent.putExtra("newsTitle", newsTitle);
         Bundle bundle = new Bundle();
         bundle.putSerializable("newsInfo",newsInfo);
         intent.putExtras(bundle);
         // 跳转到NewsContentActivity
         startActivity(intent);
+        NewsUser currentUser = NewsUser.getCurrentUser(NewsUser.class);
+        if (currentUser != null){
+            AddHistoryNewsThread addThread = new AddHistoryNewsThread(currentUser.getObjectId(), newsInfo);
+            new Thread(addThread).start();
+        }
+
         SnackbarUtil.show(mRecyclerView, getString(R.string.item_clicked), 0);
     }
 
@@ -327,5 +334,33 @@ public class NewsFragment extends BaseNewsFragment {
                         dialog.dismiss();
                     }
                 }).show();
+    }
+
+
+    // 添加收藏
+    class AddHistoryNewsThread implements Runnable {
+        String userId;
+        NewsInfo newsInfo;
+
+        public AddHistoryNewsThread(String id, NewsInfo info) {
+            userId = id;
+            newsInfo = info;
+        }
+
+        @Override
+        public void run() {
+            HistoryNews favNews = new HistoryNews(userId, newsInfo.getUniquekey(), newsInfo.getTitle(), newsInfo.getDate(), newsInfo.getAuthor_name(), newsInfo.getUrl(), newsInfo.getThumbnail_pic_s(), newsInfo.getThumbnail_pic_s02(), newsInfo.getThumbnail_pic_s03());
+            favNews.save(new SaveListener<String>() {
+                @Override
+                public void done(String objectId, BmobException e) {
+                    if (e == null) {
+                        L.d("add线程 " + Thread.currentThread().toString());
+                        // 添加新闻数据成功后保存新闻ID
+                    } else {
+                        L.d("xuqi 浏览信息失败");
+                    }
+                }
+            });
+        }
     }
 }

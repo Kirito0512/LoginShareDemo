@@ -54,7 +54,8 @@ public class NewsContentActivity extends BaseActivity {
         setContentView(R.layout.activity_news_content);
         initViews();
         currentUser = NewsUser.getCurrentUser(NewsUser.class);
-        checkIsFav(currentUser.getObjectId(), newsInfo);
+        if (currentUser != null)
+            checkIsFav(currentUser.getObjectId(), newsInfo);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -91,6 +92,8 @@ public class NewsContentActivity extends BaseActivity {
                         AddNewsThread addThread = new AddNewsThread(currentUser.getObjectId(), newsInfo);
                         new Thread(addThread).start();
                         break;
+
+                    // 分享按钮
                     case R.id.newscon_share:
                         showShare();
                         break;
@@ -154,7 +157,7 @@ public class NewsContentActivity extends BaseActivity {
             @Override
             public void done(List<FavoriteNews> list, BmobException e) {
                 if (e == null) {
-                    showToast("个数为" + list.size());
+                    //showToast("个数为" + list.size());
                     if (list.size() == 1) {
                         // 保存收藏新闻这条数据的id
                         FavNewsId = list.get(0).getObjectId();

@@ -1,6 +1,7 @@
 package com.example.xuqi.qqdemo.view;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -29,6 +30,7 @@ import com.example.xuqi.qqdemo.bean.NewsUserInfo;
 import com.example.xuqi.qqdemo.fragment.NewsFragment;
 import com.example.xuqi.qqdemo.util.SnackbarUtil;
 import com.example.xuqi.qqdemo.util.UserSessionManager;
+import com.example.xuqi.qqdemo.widget.NetworkChangeReceiver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +63,10 @@ public class MainActivity extends BaseActivity {
     private MyViewPagerAdapter mViewPagerAdapter;
     // 首页Tab右侧的加号
     private ImageView mImageViewAddTab;
-
+    // 网络监听器
+    private IntentFilter intentFilter;
+    //
+    private NetworkChangeReceiver networkChangeReceiver;
     private boolean mIsExit = false;
     private static final String TAG = "MainActivity";
 
@@ -72,6 +77,7 @@ public class MainActivity extends BaseActivity {
         initViewPagerData();
         initViews();
         checkIsLogin();
+        registeReciver();
     }
 
     private void initViewPagerData() {
@@ -163,7 +169,9 @@ public class MainActivity extends BaseActivity {
                     case R.id.nav_set:
                         showActivity(PersonalSettingActivity.class);
                         break;
-
+                    case R.id.nav_history:
+                        showActivity(HisNewsListActivity.class);
+                        break;
                     // 设置反馈按钮
                     case R.id.nav_suggest:
                         showActivity(NewsFeedBackActivity.class);
@@ -234,6 +242,13 @@ public class MainActivity extends BaseActivity {
         checkIsLogin();
     }
 
+    private void registeReciver() {
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        networkChangeReceiver = new NetworkChangeReceiver();
+        registerReceiver(networkChangeReceiver, intentFilter);
+    }
+
     // 检查是否登录&更新信息
     private void checkIsLogin() {
         // 第三方登录
@@ -295,5 +310,9 @@ public class MainActivity extends BaseActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkChangeReceiver);
+    }
 }

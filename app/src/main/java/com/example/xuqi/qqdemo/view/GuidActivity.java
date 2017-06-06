@@ -111,6 +111,9 @@ public class GuidActivity extends BaseActivity implements View.OnClickListener {
         switch (v.getId()) {
             // 引导页第三页点击时间
             case R.id.btn_start:
+                showActivity(MainActivity.class);
+                finish();
+                break;
             // 引导页第一第二页点击
             case R.id.iv_back:
                 showActivity(MainActivity.class);

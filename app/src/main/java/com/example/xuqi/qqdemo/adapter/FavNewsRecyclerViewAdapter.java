@@ -148,7 +148,7 @@ public class FavNewsRecyclerViewAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void setAdapterData(List<NewsInfo> mList){
+    public void setAdapterData(List<NewsInfo> mList) {
         this.newsList = mList;
         notifyDataSetChanged();
     }

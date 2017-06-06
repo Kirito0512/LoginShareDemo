@@ -7,9 +7,13 @@
             android:icon="@drawable/ic_favorite_border_black_24dp"
             android:title="@string/collection" />
         <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_access_time_black_24dp"
+            android:title="@string/history" />
+        <item
             android:id="@+id/nav_suggest"
             android:icon="@drawable/ic_suggest_black_24dp"
-            android:title="@string/suggest"/>
+            android:title="@string/suggest" />
         <item
             android:id="@+id/nav_evaluate"
             android:icon="@drawable/ic_thumb_up_black_24dp"

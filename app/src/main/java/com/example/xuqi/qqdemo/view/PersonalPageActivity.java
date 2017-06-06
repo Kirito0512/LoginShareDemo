@@ -190,27 +190,27 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog alertDialog = builder.create();
         View view = View.inflate(this, R.layout.dialog, (ViewGroup) findViewById(R.id.dialog));
-        TextView tv_select_gallery = (TextView) view.findViewById(R.id.take_photo);
-        TextView tv_select_camera = (TextView) view.findViewById(R.id.choose_album);
+        TextView tv_select_camera = (TextView) view.findViewById(R.id.take_photo);
+        TextView tv_select_gallery = (TextView) view.findViewById(R.id.choose_album);
         TextView tv_cancel = (TextView) view.findViewById(R.id.cancel_choose);
-        // 图库
-        tv_select_gallery.setOnClickListener(new View.OnClickListener() {// 在相册中选取
-            @Override
-            public void onClick(View v) {
-                Intent intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent2.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "head.jpg")));
-                startActivityForResult(intent2, GALLERY_REQUEST_CODE);// 采用ForResult打开
-                alertDialog.dismiss();
-            }
-        });
         // 拍照
         tv_select_camera.setOnClickListener(new View.OnClickListener() {// 调用照相机
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(Intent.ACTION_PICK, null);
-                intent1.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                startActivityForResult(intent1, CAMERA_REQUEST_CODE);
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "head.jpg")));
+                startActivityForResult(intent, CAMERA_REQUEST_CODE);// 采用ForResult打开
+                alertDialog.dismiss();
+            }
+        });
+        // 相册
+        tv_select_gallery.setOnClickListener(new View.OnClickListener() {// 在相册中选择
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK, null);
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                startActivityForResult(intent, GALLERY_REQUEST_CODE);
                 alertDialog.dismiss();
             }
         });
@@ -227,18 +227,22 @@ public class PersonalPageActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+            // 拍照的回传
             case CAMERA_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    cropPhoto(data.getData());// 裁剪图片
-                }
-                break;
-            case GALLERY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     File temp = new File(Environment.getExternalStorageDirectory() + "/head.jpg");
                     cropPhoto(Uri.fromFile(temp));// 裁剪图片
                 }
-
                 break;
+
+            // 图库选择图片回传
+            case GALLERY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    cropPhoto(data.getData());// 裁剪图片
+                }
+                break;
+
+            // 裁剪图片回传
             case CROP_REQUEST_CODE:
                 if (data != null) {
                     Bundle extras = data.getExtras();
