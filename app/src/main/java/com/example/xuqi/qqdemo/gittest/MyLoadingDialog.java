@@ -1,4 +1,4 @@
-package com.example.xuqi.qqdemo;
+package com.example.xuqi.qqdemo.gittest;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -8,6 +8,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import com.example.xuqi.qqdemo.R;
 
 public class MyLoadingDialog extends Dialog {
     private View mPanel;
